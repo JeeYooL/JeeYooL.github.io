@@ -5,9 +5,9 @@ oneLiner: "연구실에서 매일 실제로 쓰이는 내부 도구들."
 accent: accent
 status: "연구실에서 상시 사용 중"
 tags:
-  - "도구"
-  - "자동화"
-  - "오픈소스"
+  - "Tooling"
+  - "Automation"
+  - "Open Source"
 ---
 
 ## 문제

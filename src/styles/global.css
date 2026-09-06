@@ -73,9 +73,12 @@
   --color-signal:      var(--c-signal);
   --color-signal-wash: var(--c-signal-wash);
 
-  --font-display: Spectral, "Noto Serif KR", Georgia, "Times New Roman", serif;
-  --font-sans: "IBM Plex Sans", "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: Spectral, "Pretendard Variable", Pretendard, Georgia, "Times New Roman", serif;
+  --font-sans: "IBM Plex Sans", "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Korean stack — one family for headings and body, for legibility at every size. */
+  --font-ko: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
 }
 
 @layer base {
@@ -88,8 +91,8 @@
     background: var(--c-bg);
     color: var(--c-ink);
     font-family: var(--font-sans);
-    font-size: 15.5px;
-    line-height: 1.62;
+    font-size: 16px;
+    line-height: 1.66;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -109,6 +112,18 @@
 
   /* Korean must not break inside a word; Latin runs still wrap normally. */
   [lang="ko"] { word-break: keep-all; overflow-wrap: break-word; }
+
+  /* The Korean pages run on one family throughout. A serif display face and a
+     Latin-only body face both degrade badly in Hangul, which is what made the
+     first version hard to read. */
+  [lang="ko"] body,
+  [lang="ko"] h1, [lang="ko"] h2, [lang="ko"] h3, [lang="ko"] h4 {
+    font-family: var(--font-ko);
+  }
+  [lang="ko"] h1, [lang="ko"] h2, [lang="ko"] h3, [lang="ko"] h4 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after {
@@ -176,5 +191,17 @@
   @media (prefers-reduced-motion: reduce) {
     .trace { stroke-dasharray: none; stroke-dashoffset: 0; animation: none; }
     .trace-late { animation: none; opacity: 1; }
+  }
+}
+
+@layer components {
+  /* Monospace has no Hangul, so a Korean string in a mono label falls back to
+     whatever the system has and the tracking blows it apart. Latin and digits
+     keep the mono treatment; Korean drops back to the text face. */
+  [lang="ko"] .mono-label,
+  [lang="ko"] .chip {
+    font-family: var(--font-ko);
+    letter-spacing: 0.01em;
+    text-transform: none;
   }
 }

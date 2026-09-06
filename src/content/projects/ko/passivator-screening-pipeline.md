@@ -1,13 +1,13 @@
 ---
-title: "패시베이터 스크리닝 파이프라인"
+title: "Passivator 스크리닝 파이프라인"
 order: 3
 oneLiner: "안정성을 최적화 목표로 삼는, 물리에 근거한 표면 패시베이터 분자 ML 스크리닝."
 accent: accent
 status: "Descriptor suite 구축 중, Phase 0·1·4A 우선"
 tags:
-  - "머신러닝"
+  - "Machine Learning"
   - "DFT"
-  - "소재 설계"
+  - "Materials Design"
 ---
 
 ## 문제

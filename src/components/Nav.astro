@@ -18,106 +18,134 @@ const items = navPaths.map((n) => ({
   id="site-header"
   data-scroll-nav={scrollNav ? 'true' : 'false'}
   data-state="open"
-  class="sticky top-0 z-30 border-b border-line bg-bg"
+  class="sticky top-0 z-30"
 >
-  <div class="mx-auto flex max-w-[1140px] items-baseline gap-5 px-7 py-3">
-    <a href={localePath('/', lang)} class="font-display text-[17px] font-semibold tracking-[-0.01em] no-underline">
-      {s.name}
-    </a>
-    <span class="mono-label hidden sm:inline">{s.role}</span>
-    <div class="ml-auto flex items-center gap-3">
-      <a class="mono-label no-underline hover:text-accent" href={site.links.github} rel="me noopener" target="_blank">{s.common.github}</a>
-      <a class="mono-label no-underline hover:text-accent" href={`mailto:${site.email}`}>{s.common.email}</a>
-      <a
-        href={localePath(here, other)}
-        hreflang={other}
-        aria-label={s.a11y.langToggle}
-        class="rounded border border-line px-2 py-[3px] font-mono text-[11px] text-muted no-underline transition-colors hover:border-accent hover:text-accent"
-        >{switchLabel[lang]}</a
-      >
-      <button
-        id="theme-toggle"
-        type="button"
-        aria-label={s.a11y.themeToggle}
-        data-label-system={s.theme.system}
-        data-label-light={s.theme.light}
-        data-label-dark={s.theme.dark}
-        class="rounded border border-line px-2 py-[3px] font-mono text-[11px] text-muted transition-colors hover:border-accent hover:text-accent"
-      >
-        <span data-theme-label>{s.theme.system}</span>
-      </button>
+  {/* The bar is the only part in the document flow. The section list below is
+      absolutely positioned, so collapsing it never changes the page height —
+      an earlier version animated a flow-affecting height and the resulting
+      scroll feedback made the header vibrate. */}
+  <div class="relative z-10 border-b border-line bg-bg">
+    <div class="mx-auto flex max-w-[1140px] items-baseline gap-5 px-7 py-3">
+      <a href={localePath('/', lang)} class="font-display text-[17px] font-semibold tracking-[-0.01em] no-underline">
+        {s.name}
+      </a>
+      <span class="mono-label hidden sm:inline">{s.role}</span>
+      <div class="ml-auto flex items-center gap-3">
+        <a class="mono-label no-underline hover:text-accent" href={site.links.github} rel="me noopener" target="_blank">{s.common.github}</a>
+        <a class="mono-label no-underline hover:text-accent" href={`mailto:${site.email}`}>{s.common.email}</a>
+        <a
+          href={localePath(here, other)}
+          hreflang={other}
+          aria-label={s.a11y.langToggle}
+          class="rounded border border-line px-2 py-[3px] font-mono text-[11px] text-muted no-underline transition-colors hover:border-accent hover:text-accent"
+          >{switchLabel[lang]}</a
+        >
+        <button
+          id="theme-toggle"
+          type="button"
+          aria-label={s.a11y.themeToggle}
+          data-label-system={s.theme.system}
+          data-label-light={s.theme.light}
+          data-label-dark={s.theme.dark}
+          class="rounded border border-line px-2 py-[3px] font-mono text-[11px] text-muted transition-colors hover:border-accent hover:text-accent"
+        >
+          <span data-theme-label>{s.theme.system}</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  {/* The four detail pages. Collapses while scrolling down, returns when the
-      scroll stops, when scrolling up, or at the top of the document. */}
-  <div id="nav-panel" class="grid grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out">
-    <div class="overflow-hidden">
-      <nav
-        aria-label={s.a11y.sections}
-        class="mx-auto grid max-w-[1140px] grid-cols-2 gap-px border-t border-line bg-line px-0 md:grid-cols-4"
-      >
-        {
-          items.map((item) => (
-            <a
-              href={item.href}
-              aria-current={item.active ? 'page' : undefined}
+  <div
+    id="nav-panel"
+    class="absolute inset-x-0 top-full z-0 border-b border-line bg-bg transition-[transform,opacity] duration-300 ease-out"
+  >
+    <nav
+      aria-label={s.a11y.sections}
+      class="mx-auto grid max-w-[1140px] grid-cols-2 gap-px bg-line px-0 md:grid-cols-4"
+    >
+      {
+        items.map((item) => (
+          <a
+            href={item.href}
+            aria-current={item.active ? 'page' : undefined}
+            class:list={[
+              'group flex flex-col gap-1 bg-bg px-7 py-3 no-underline transition-colors hover:bg-surface md:px-5',
+              item.active && 'bg-surface',
+            ]}
+          >
+            <span
               class:list={[
-                'group flex flex-col gap-1 bg-bg px-7 py-3 no-underline transition-colors hover:bg-surface md:px-5',
-                item.active && 'bg-surface',
+                'text-[15.5px] font-semibold',
+                item.active ? 'text-accent' : 'text-ink group-hover:text-accent',
               ]}
             >
-              <span
-                class:list={[
-                  'font-display text-[15.5px] font-semibold',
-                  item.active ? 'text-accent' : 'text-ink group-hover:text-accent',
-                ]}
-              >
-                {item.label}
-              </span>
-              <span class="font-mono text-[10.5px] leading-snug text-muted">{item.blurb}</span>
-            </a>
-          ))
-        }
-      </nav>
-    </div>
+              {item.label}
+            </span>
+            <span class="mono-label !normal-case text-[11px] leading-snug tracking-normal">{item.blurb}</span>
+          </a>
+        ))
+      }
+    </nav>
   </div>
 </header>
 
+<style>
+  /* Collapsed: the list slides up behind the bar. No height animation, so the
+     document never reflows and the scroll position never gets pushed around. */
+  #site-header[data-state='peek'] #nav-panel {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #nav-panel { transition: none; }
+  }
+</style>
+
 <script>
   const header = document.getElementById('site-header');
-  const panel = document.getElementById('nav-panel');
 
-  if (header && panel && header.dataset.scrollNav === 'true') {
+  if (header && header.dataset.scrollNav === 'true') {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const OPEN_AT = 90;      // always open this close to the top
+    const ARM_AT = 200;      // never collapse before here
+    const DELTA = 28;        // travel required to flip state — kills jitter
+    let anchor = window.scrollY;
     let last = window.scrollY;
+    let state: 'open' | 'peek' = 'open';
     let idle: number | undefined;
+    let queued = false;
 
-    const open = () => {
-      panel.classList.remove('grid-rows-[0fr]');
-      panel.classList.add('grid-rows-[1fr]');
-      header.dataset.state = 'open';
-    };
-    const collapse = () => {
-      panel.classList.remove('grid-rows-[1fr]');
-      panel.classList.add('grid-rows-[0fr]');
-      header.dataset.state = 'peek';
+    const set = (next: 'open' | 'peek') => {
+      if (state === next) return;
+      state = next;
+      header.dataset.state = next;
     };
 
-    const onScroll = () => {
+    const measure = () => {
+      queued = false;
       const y = window.scrollY;
-      // Near the top, or heading back up: the section list belongs on screen.
-      if (y < 80 || y < last - 4) open();
-      else if (y > last + 4 && y > 140) collapse();
+
+      if (y < OPEN_AT) { set('open'); anchor = y; last = y; return; }
+
+      // Direction changes reset the anchor, so DELTA is travel in one
+      // direction rather than distance from an arbitrary old position.
+      if ((y > last && anchor > last) || (y < last && anchor < last)) anchor = last;
       last = y;
 
-      // Stopped scrolling — bring it back so the next move is always one click away.
+      if (y - anchor > DELTA && y > ARM_AT) { set('peek'); anchor = y; }
+      else if (anchor - y > DELTA) { set('open'); anchor = y; }
+
       window.clearTimeout(idle);
-      idle = window.setTimeout(open, reduce ? 0 : 260);
+      idle = window.setTimeout(() => set('open'), reduce ? 0 : 320);
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener(
+      'scroll',
+      () => { if (!queued) { queued = true; requestAnimationFrame(measure); } },
+      { passive: true },
+    );
+    measure();
   }
 
   // Theme toggle: cycles system → light → dark → system.

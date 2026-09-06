@@ -168,10 +168,32 @@ in sync.
 | `--c-accent` | `#0E5B54` | `#63D2C3` | links, computational thread |
 | `--c-signal` | `#8E4E1D` | `#DB9F6C` | data annotations, space & hardware thread |
 
-Type: **Spectral** for headings, **IBM Plex Sans** for body, **IBM Plex Mono**
-for numbers, dates, venues and chips. Korean falls through to **Noto Serif KR**
-and **IBM Plex Sans KR** in the same stacks, and `[lang="ko"]` sets
-`word-break: keep-all` so Korean never breaks mid-word.
+Type is split by language, because a face that carries English well does not
+necessarily carry Hangul at all.
+
+- **English** — Spectral for headings, IBM Plex Sans for body, IBM Plex Mono for
+  numbers, dates, venues and chips.
+- **Korean** — [Pretendard](https://github.com/orioncactus/pretendard)
+  throughout, loaded from jsDelivr as a dynamic subset so only the syllable
+  blocks a page uses are downloaded. A serif display face and a Latin-only body
+  face both fell apart in Hangul, which is what made the first version hard to
+  read. If the CDN is ever unreachable, the stack falls back to Apple SD Gothic
+  Neo / Malgun Gothic and the page stays legible.
+
+Two rules keep Korean from breaking:
+
+- `[lang="ko"] { word-break: keep-all }` — Korean never splits mid-word.
+- Pretendard sits inside `--font-mono` **after** IBM Plex Mono. Font fallback is
+  per-character, so digits and Latin keep the monospace treatment while Hangul
+  drops into Pretendard. Without this, a Korean word in a mono label falls back
+  to a system face and the 0.13em tracking blows it apart. `[lang="ko"]` also
+  resets that tracking on `.mono-label` and `.chip` — and those overrides live
+  in the `components` layer, not `base`, because a cascade layer beats
+  specificity and a base-layer rule would silently lose.
+
+Technical vocabulary stays in English on the Korean pages — `Burn-in`,
+`Light soaking`, `self-healing`, `proton irradiation`, `transport layer`, the
+publication tags, the project tags. Only connective prose is translated.
 
 Rules the design depends on:
 
@@ -190,6 +212,14 @@ Three small scripts, no framework:
 1. **Header** (`src/components/Nav.astro`) — the four-page list collapses while
    you scroll down and returns when you scroll up, stop scrolling, or reach the
    top. Also runs the theme toggle.
+
+   The list is **absolutely positioned** below the bar, so collapsing it never
+   changes the document height. An earlier version animated a flow-affecting
+   height: the reflow moved the scroll position, which fired another scroll
+   event, which toggled the header again — the whole bar vibrated. Only the bar
+   is in the flow now, and it is a constant 54px. The handler also needs 28px of
+   travel in one direction before it flips state, so small wheel jitter cannot
+   trigger it.
 2. **Reading progress** (`src/pages/index.astro`) — a 2px bar. The only scroll
    effect on the site; there are deliberately no entrance animations.
 3. **Tag filter** (`src/pages/publications.astro`) — toggles `hidden` on list

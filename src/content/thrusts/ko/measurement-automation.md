@@ -6,7 +6,7 @@ keywords:
   - "MPPT"
   - "operando 측정"
   - "self-driving lab"
-  - "장비 제어"
+  - "instrument control"
 projects:
   - "mppt-measurement-system"
   - "self-driving-lab"

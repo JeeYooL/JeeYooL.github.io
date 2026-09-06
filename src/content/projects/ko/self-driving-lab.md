@@ -5,9 +5,9 @@ oneLiner: "실시간 관측 레이어를 갖춘 자율 페로브스카이트 실
 accent: accent
 status: "레퍼런스 구현 동작 중"
 tags:
-  - "자동화"
-  - "최적화"
-  - "시스템"
+  - "Automation"
+  - "Optimization"
+  - "Systems"
 ---
 
 ## 문제

@@ -5,9 +5,9 @@ oneLiner: "페로브스카이트 장기 안정성 시험을 위한 자체 제작
 accent: signal
 status: "Rev 03 제작 중, 단채널 보드 완성"
 tags:
-  - "하드웨어"
-  - "펌웨어"
-  - "계측"
+  - "Hardware"
+  - "Firmware"
+  - "Instrumentation"
 # 이미지를 넣으려면 src/assets/projects/mppt-measurement-system/ 에 파일을 두고
 # 아래 주석을 풀어 파일명을 맞추세요. 자세한 설명은 src/assets/README.md 참고.
 # thumbnail: "mppt-measurement-system/board.jpg"

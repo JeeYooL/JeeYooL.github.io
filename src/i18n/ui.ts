@@ -37,13 +37,13 @@ export const ui = {
 
     tagLabels: {
       All: '전체',
-      Perovskite: '페로브스카이트',
-      Stability: '안정성',
-      Processing: '공정',
-      Modules: '모듈',
-      Tandem: '탠덤',
-      'Lead-Free': '무연',
-      Characterization: '분석',
+      Perovskite: 'Perovskite',
+      Stability: 'Stability',
+      Processing: 'Processing',
+      Modules: 'Modules',
+      Tandem: 'Tandem',
+      'Lead-Free': 'Lead-free',
+      Characterization: 'Characterization',
     },
 
     common: {
@@ -75,8 +75,8 @@ export const ui = {
         '페로브스카이트 태양전지 연구자 권형우 — 계측 하드웨어, 물리 기반 열화 모델, 머신러닝 소재 설계.',
       figureCaption:
         '3-exponential 열화 모델(burn-in, light-soaking 회복, 두 개의 감쇠항)로 생성한 합성 곡선입니다. 실측 데이터가 아니며, 측정된 MPPT 데이터로 대체되기 전까지의 자리표시입니다.',
-      figureAxisY: '정규화 PCE',
-      figureAxisX: '연속 MPPT 시간 (h)',
+      figureAxisY: 'Normalized PCE',
+      figureAxisX: 'Time under continuous MPPT (h)',
       highlightsLabel: '요약',
       highlightsTitle: '세 가지',
       highlights: [
@@ -102,13 +102,13 @@ export const ui = {
       publicationsLabel: '논문',
       publicationsTitle: '공동 1저자',
       stats: [
-        { value: 8, unit: '편', label: '동료평가 논문 (공동 1저자 3편)' },
+        { value: 8, unit: '', label: '동료평가 논문 (공동 1저자 3편)' },
         { value: 12, unit: 'ch', label: '자체 제작 MPPT 측정 채널' },
         { value: 1718, unit: 'h', label: '모델이 예측한 T80' },
-        { value: 3, unit: '곳', label: '거쳐온 연구그룹 (2개국)' },
+        { value: 3, unit: '', label: '거쳐온 연구그룹, 2개국' },
       ],
       story: {
-        label: '열화 곡선',
+        label: 'Degradation',
         heading: '이 소자는 어떻게 죽는가',
         lede:
           '아래 곡선은 1-sun 연속 구동에서 정규화 효율이 떨어지는 모습입니다. 하나의 매끄러운 감쇠처럼 보이지만, 실제로는 서로 다른 물리를 가진 네 개의 구간이 겹쳐 있습니다. 스크롤하면 순서대로 지나갑니다.',
@@ -117,18 +117,18 @@ export const ui = {
         stages: [
           {
             tag: '0 – 60 h',
-            title: '번인',
-            body: '처음 며칠이 가장 가파릅니다. 계면의 얕은 트랩이 채워지고 이온이 자리를 잡는 구간이며, 시상수는 9시간 수준입니다. 여기서 잃은 6.5%는 대부분 돌아오지 않습니다.',
+            title: 'Burn-in',
+            body: '처음 며칠이 가장 가파릅니다. 계면의 shallow trap이 채워지고 이온이 자리를 잡는 구간으로, τ ≈ 9 h 수준입니다. 여기서 잃은 6.5%는 대부분 돌아오지 않습니다.',
           },
           {
             tag: '60 – 320 h',
-            title: '광침지 회복',
-            body: '그런데 곡선이 잠깐 되돌아옵니다. 광조사가 일부 결함을 되돌리는 self-healing 구간입니다. 지상에서는 2%대의 작은 항이지만, 양성자 조사 환경에서는 이 항이 수명 예측을 통째로 바꿉니다.',
+            title: 'Light soaking',
+            body: '그런데 곡선이 잠깐 되돌아옵니다. 광조사가 일부 결함을 되돌리는 self-healing 구간입니다. 지상에서는 2% 남짓한 작은 항이지만, proton irradiation 환경에서는 이 항이 수명 예측을 통째로 바꿉니다.',
           },
           {
             tag: '320 h –',
-            title: '장기 감쇠',
-            body: '이후는 두 개의 감쇠항이 지배합니다. 빠른 쪽(τ ≈ 320 h)은 수송층 계면, 느린 쪽(τ ≈ 2400 h)은 흡수층 자체의 조성 변화입니다. 수명을 정하는 것은 느린 쪽이고, 제가 예측하려는 것도 그것입니다.',
+            title: 'Long-term decay',
+            body: '이후는 두 개의 감쇠항이 지배합니다. 빠른 쪽(τ ≈ 320 h)은 transport layer 계면, 느린 쪽(τ ≈ 2400 h)은 absorber 자체의 조성 변화입니다. 수명을 정하는 것은 느린 쪽이고, 제가 예측하려는 것도 그것입니다.',
           },
           {
             tag: '≈ 1,718 h',

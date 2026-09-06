@@ -5,9 +5,9 @@ oneLiner: "궤도 방사선 환경에서 예측 소자 수명까지 이어지는
 accent: signal
 status: "파이프라인 완성, 검증 진행 중"
 tags:
-  - "우주"
-  - "시뮬레이션"
-  - "머신러닝"
+  - "Space"
+  - "Simulation"
+  - "Machine Learning"
 ---
 
 ## 문제
