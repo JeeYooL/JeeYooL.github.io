@@ -9,7 +9,7 @@ export const site = {
   // most recent papers use.
   nameLatin: 'Hyoung Woo Kwon',
   email: 'hwkwon@unist.ac.kr',
-  repo: 'https://github.com/JeeYooL/Perovskite',
+  repo: 'https://github.com/JeeYooL/JeeYooL.github.io',
   links: {
     github: 'https://github.com/JeeYooL',
     githubLabel: 'github.com/JeeYooL',
@@ -18,7 +18,7 @@ export const site = {
     cvPdf: '', // TODO: drop kwon-cv.pdf into /public and set to '/kwon-cv.pdf'
   },
   patentNumber: 'KR 10-2118728 B1',
-  lastUpdated: '2026-09-06',
+  lastUpdated: '2026-09-07',
 } as const;
 
 /** Canonical, language-free paths. localePath() adds the /en prefix. */

@@ -26,11 +26,12 @@ Three tools, each aimed at one of those.
 
 ## Result
 
-All three are in routine use by the group rather than sitting in a personal repository. The Perovskite AI Lab app — XGBoost, random forest and Gaussian process regression over process conditions, with SHAP attribution — is public.
+All three are in routine use by the group rather than sitting in a personal repository, and the measurement, analysis and literature tools are now published as a single repository. The Perovskite AI Lab app — XGBoost, random forest and Gaussian process regression over process conditions, with SHAP attribution — is public.
 
 *Time saved and user count to be filled in.*
 
 ## Links
 
+- Lab tools repository — https://github.com/JeeYooL/perovskite-lab-tools
 - Perovskite AI Lab repository — https://github.com/JeeYooL/Perovskite
 - Tool screenshots — *asset pending*

@@ -26,11 +26,12 @@ tags:
 
 ## 결과
 
-셋 다 개인 저장소에 놓여 있는 것이 아니라 연구실에서 상시 사용되고 있습니다. 공정 조건에 대해 XGBoost, random forest, Gaussian process 회귀를 돌리고 SHAP로 기여도를 보는 Perovskite AI Lab 앱은 공개되어 있습니다.
+셋 다 개인 저장소에 놓여 있는 것이 아니라 연구실에서 상시 사용되고 있으며, 측정·분석·문헌 도구는 공개 저장소로 정리해 두었습니다. 공정 조건에 대해 XGBoost, random forest, Gaussian process 회귀를 돌리고 SHAP로 기여도를 보는 Perovskite AI Lab 앱은 공개되어 있습니다.
 
 *절감 시간과 사용자 수는 확인 후 채워 넣을 예정입니다.*
 
 ## 링크
 
+- 실험실 도구 저장소 — https://github.com/JeeYooL/perovskite-lab-tools
 - Perovskite AI Lab 저장소 — https://github.com/JeeYooL/Perovskite
 - 도구 스크린샷 — *자료 준비 중*
