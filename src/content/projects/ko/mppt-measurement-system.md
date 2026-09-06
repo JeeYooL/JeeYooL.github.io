@@ -8,6 +8,18 @@ tags:
   - "하드웨어"
   - "펌웨어"
   - "계측"
+# 이미지를 넣으려면 src/assets/projects/mppt-measurement-system/ 에 파일을 두고
+# 아래 주석을 풀어 파일명을 맞추세요. 자세한 설명은 src/assets/README.md 참고.
+# thumbnail: "mppt-measurement-system/board.jpg"
+# thumbnailAlt: "MPPT 측정 보드"
+# images:
+#   - src: "mppt-measurement-system/board.jpg"
+#     alt: "MPPT 측정 보드"
+#     caption: "Rev 02 단채널 보드. INA226·MCP4725·LM358 배치."
+#   - src: "mppt-measurement-system/jig.jpg"
+#     alt: "2×2 온도 제어 지그"
+#     caption: "가공 직후 상태."
+#     wide: true
 ---
 
 ## 문제

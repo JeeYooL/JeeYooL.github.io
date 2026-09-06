@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import Figure from './Figure.astro';
 import { t, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -44,7 +45,15 @@ const authorHtml = pub.authors
 
   <p class="max-w-[78ch] text-[13px] leading-relaxed text-muted" lang="en" set:html={authorHtml} />
 
-  {featured && <p class="max-w-[74ch] pt-1 text-[15px] text-ink-2">{contribution}</p>}
+  {featured &&
+    (pub.abstractImage ? (
+      <div class="grid gap-5 pt-1 sm:grid-cols-[260px_minmax(0,1fr)] sm:gap-7">
+        <Figure src={pub.abstractImage} kind="publications" alt={`${pub.title} — graphical abstract`} />
+        <p class="max-w-[74ch] text-[15px] text-ink-2">{contribution}</p>
+      </div>
+    ) : (
+      <p class="max-w-[74ch] pt-1 text-[15px] text-ink-2">{contribution}</p>
+    ))}
 
   <div class="flex flex-wrap items-center gap-2 pt-1">
     {doiUrl && <a class="chip no-underline hover:border-accent hover:text-accent" href={doiUrl} rel="noopener" target="_blank">{s.common.doi}</a>}

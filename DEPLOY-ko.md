@@ -64,7 +64,81 @@ Node 20 이상이면 됩니다. `npm run build`로 `dist/`가 만들어집니다
 frontmatter는 `src/content/config.ts`에서 스키마 검증을 하므로, 오타가 있으면
 빈 칸으로 렌더링되지 않고 빌드가 실패합니다.
 
-## 4. 지금 비어 있는 것
+## 4. 이미지 넣기
+
+파일은 **`src/assets/`** 에 둡니다. 여기 둔 이미지는 빌드할 때 자동으로
+WebP로 바뀌고 화면 크기별로 여러 벌이 만들어집니다. 원본 그대로 서빙해야 하는
+파일(이력서 PDF 등)만 `public/`에 두세요.
+
+```
+src/assets/
+  projects/<프로젝트-슬러그>/*.jpg|png|svg   프로젝트 사진·다이어그램
+  publications/*.jpg|png                     논문 graphical abstract
+```
+
+프로젝트 슬러그는 `src/content/projects/ko/` 안의 파일명과 같습니다.
+예: `mppt-measurement-system.md` → `src/assets/projects/mppt-measurement-system/`
+
+### 순서
+
+1. 파일을 위 폴더에 넣습니다.
+2. 휴대폰 사진이면 크기를 줄입니다.
+   ```bash
+   npm run images            # 무엇이 줄어들지 확인만 (파일은 안 건드림)
+   npm run images -- --fix   # 긴 변 2400px로 줄여서 덮어쓰기
+   ```
+   EXIF 회전 정보도 정리되므로 세로 사진이 눕는 문제도 같이 없어집니다.
+3. 해당 프로젝트의 `.md` frontmatter에서 주석을 풉니다. `mppt-measurement-system.md`
+   에 예시가 이미 적혀 있습니다.
+   ```yaml
+   thumbnail: "mppt-measurement-system/board.jpg"     # 목록 카드 썸네일 (3:2로 잘림)
+   thumbnailAlt: "MPPT 측정 보드"
+   images:                                            # 본문 아래 "자료" 섹션
+     - src: "mppt-measurement-system/board.jpg"
+       alt: "MPPT 측정 보드"                          # 필수 — 스크린리더가 읽습니다
+       caption: "Rev 02 단채널 보드. INA226·MCP4725·LM358 배치."
+     - src: "mppt-measurement-system/jig.jpg"
+       alt: "2×2 온도 제어 지그"
+       caption: "가공 직후 상태."
+       wide: true                                     # 2열이 아니라 전체 폭
+   ```
+4. 한국어·영어 파일에 **같은 `src`** 를 쓰고 `alt`·`caption` 만 각 언어로 씁니다.
+5. commit → push. GitHub Actions가 알아서 빌드합니다.
+
+파일명을 틀리면 **빌드가 실패하면서 사용 가능한 파일 목록을 보여줍니다.**
+조용히 깨진 이미지로 나가는 일은 없습니다.
+
+### 본문 중간에 넣기
+
+마크다운에 그냥 쓰면 됩니다. 이 경우 파일은 `public/img/` 에 두세요.
+
+```markdown
+![회로 블록 다이어그램](/img/mppt-block-diagram.svg)
+```
+
+본문 안의 이미지도 클릭하면 똑같이 확대됩니다.
+다이어그램은 **SVG를 권합니다** — 용량이 작고 확대해도 깨지지 않습니다.
+PowerPoint·Illustrator·draw.io 모두 SVG로 내보낼 수 있습니다.
+
+### 논문 graphical abstract
+
+`src/assets/publications/` 에 넣고 해당 논문 `.md` 에 한 줄 추가합니다.
+
+```yaml
+abstractImage: "2022-ethanol.jpg"
+```
+
+대표 논문 3편 중 #3(ACS AMI 2026)은 CC BY 4.0이라 출처를 밝히면 그대로 쓸 수
+있고, #1·#2는 Springer Nature라 이용 조건을 확인하거나 핵심 도식을 직접 다시
+그리셔야 합니다.
+
+### 확대 보기
+
+썸네일을 뺀 모든 이미지는 클릭하면 전체 화면으로 열립니다. Esc나 바깥쪽 클릭,
+닫기 버튼으로 닫히고 키보드로도 열 수 있습니다. 확대용으로는 원본이 아니라
+1600px WebP를 씁니다 — 원본 5 MB짜리를 그대로 내려받게 하지 않기 위해서입니다.
+
+## 5. 지금 비어 있는 것
 
 - **이력서 PDF** — `public/kwon-cv.pdf`에 넣고 `src/data/site.ts`의
   `links.cvPdf`를 `'/kwon-cv.pdf'`로 바꾸면 Home·CV의 비활성 버튼이 살아납니다.
@@ -75,11 +149,9 @@ frontmatter는 `src/content/config.ts`에서 스키마 검증을 하므로, 오�
   나오니 눈에 띕니다.
 - **이미지** — MPPT 보드 사진·회로도, 지그 CAD, SDL observability 스크린샷,
   파이프라인 다이어그램 2종, 랩 도구 스크린샷 3장, 대표 논문 graphical
-  abstract 3장. `public/`에 넣고 Markdown에서 참조하면 됩니다.
-  (#3 논문은 CC BY 4.0이라 출처 표기하면 재사용 가능, #1·#2는 Springer Nature라
-  이용 조건 확인 또는 직접 다시 그리셔야 합니다.)
+  abstract 3장. 넣는 방법은 위 4장 참고.
 
-## 5. 지시서 대비 달라진 점
+## 6. 지시서 대비 달라진 점
 
 - **디자인**: 지시서의 인디고(#2E2A9E) + Archivo 대신, 직전에 확인하신
   petrol(#0E5B54) + copper(#8E4E1D) / Spectral + IBM Plex 조합을 그대로

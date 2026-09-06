@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Figure from '../components/Figure.astro';
 import { t, type Lang } from '../i18n/ui';
 import { localePath, splitId } from '../i18n/utils';
 
@@ -11,6 +12,10 @@ const s = t(lang);
 const projects = (await getCollection('projects'))
   .filter((e) => splitId(e.id).lang === lang)
   .sort((a, b) => a.data.order - b.data.order);
+
+// One grid for the whole list: as soon as any project has a thumbnail, every
+// card reserves the column, so the titles stay on one line down the page.
+const anyThumb = projects.some((p) => p.data.thumbnail);
 ---
 <Base lang={lang} title={s.projects.title} description={s.projects.description}>
   <div class="mx-auto max-w-[1140px] px-7 pb-24">
@@ -25,8 +30,23 @@ const projects = (await getCollection('projects'))
         <li class="border-t border-line">
           <a
             href={localePath(`/projects/${splitId(p.id).slug}/`, lang)}
-            class="group grid gap-4 py-8 no-underline md:grid-cols-[minmax(0,1fr)_260px] md:gap-10"
+            class:list={[
+              'group grid gap-4 py-8 no-underline md:gap-10',
+              anyThumb ? 'md:grid-cols-[200px_minmax(0,1fr)_220px]' : 'md:grid-cols-[minmax(0,1fr)_260px]',
+            ]}
           >
+            {anyThumb &&
+              (p.data.thumbnail ? (
+                <Figure
+                  src={p.data.thumbnail}
+                  alt={p.data.thumbnailAlt ?? p.data.title}
+                  zoomable={false}
+                  cover={true}
+                  widthClass="w-full max-w-[280px]"
+                />
+              ) : (
+                <div class="hidden md:block" aria-hidden="true" />
+              ))}
             <div class="flex flex-col gap-2.5">
               <h2 class:list={['text-[24px] transition-colors', p.data.accent === 'signal' ? 'group-hover:text-signal' : 'group-hover:text-accent']}>
                 {p.data.title}

@@ -2,6 +2,8 @@
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Figure from '../components/Figure.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { t, type Lang } from '../i18n/ui';
 import { localePath, splitId } from '../i18n/utils';
 
@@ -36,6 +38,29 @@ const next = all[idx + 1];
     <article class="project-body max-w-[74ch] pt-10">
       <Content />
     </article>
+
+    {project.data.images.length > 0 && (
+      <section class="mt-12 border-t border-line pt-8">
+        <div class="flex flex-wrap items-baseline justify-between gap-3 pb-6">
+          <h2 class="mono-label">{s.common.figures}</h2>
+          <span class="font-mono text-[11px] text-muted">{s.common.zoomHint}</span>
+        </div>
+        <div class="grid gap-8 md:grid-cols-2">
+          {project.data.images.map((fig, i) => (
+            <div class:list={[fig.wide && 'md:col-span-2']}>
+              <Figure
+                src={fig.src}
+                alt={fig.alt}
+                caption={fig.caption}
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <Lightbox lang={lang} />
 
     <nav class="mt-16 flex flex-wrap justify-between gap-6 border-t border-line-strong pt-6" aria-label={s.a11y.projectNav}>
       {prev ? (

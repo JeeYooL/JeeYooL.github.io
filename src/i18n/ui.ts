@@ -63,6 +63,10 @@ export const ui = {
       siteRepo: '사이트 저장소',
       scholar: 'Google Scholar 프로필',
       doi: 'DOI',
+      figures: '자료',
+      close: '닫기',
+      imageViewer: '이미지 크게 보기',
+      zoomHint: '이미지를 누르면 크게 볼 수 있습니다.',
     },
 
     home: {
@@ -284,6 +288,10 @@ export const ui = {
       siteRepo: 'Site repository',
       scholar: 'Google Scholar profile',
       doi: 'DOI',
+      figures: 'Figures',
+      close: 'Close',
+      imageViewer: 'Image viewer',
+      zoomHint: 'Click an image to enlarge.',
     },
 
     home: {

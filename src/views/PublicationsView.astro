@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PubEntry from '../components/PubEntry.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { t, type Lang } from '../i18n/ui';
 import { site } from '../data/site';
 
@@ -62,6 +63,7 @@ const label = (tag: string) => s.tagLabels[tag as keyof typeof s.tagLabels] ?? t
       </div>
     </section>
   </div>
+  <Lightbox lang={lang} />
 </Base>
 
 <script>

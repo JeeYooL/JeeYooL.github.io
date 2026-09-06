@@ -119,6 +119,10 @@
   }
 }
 
+@layer base {
+  img, svg, video { max-width: 100%; height: auto; }
+}
+
 @layer components {
   /* Prose link — the only underlined thing on the site. */
   .link {

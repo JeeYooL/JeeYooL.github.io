@@ -8,6 +8,18 @@ tags:
   - "Hardware"
   - "Firmware"
   - "Instrumentation"
+# To add images, drop files into src/assets/projects/mppt-measurement-system/
+# and uncomment the lines below. See src/assets/README.md.
+# thumbnail: "mppt-measurement-system/board.jpg"
+# thumbnailAlt: "MPPT measurement board"
+# images:
+#   - src: "mppt-measurement-system/board.jpg"
+#     alt: "MPPT measurement board"
+#     caption: "Rev 02 single-channel board — INA226, MCP4725 and LM358 layout."
+#   - src: "mppt-measurement-system/jig.jpg"
+#     alt: "2x2 temperature-controlled jig"
+#     caption: "Straight out of the workshop."
+#     wide: true
 ---
 
 ## Problem

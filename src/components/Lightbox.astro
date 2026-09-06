@@ -1,0 +1,71 @@
+---
+import { t, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+---
+<dialog
+  id="lightbox"
+  class="m-auto max-h-[92vh] max-w-[94vw] border-0 bg-transparent p-0 backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+  aria-label={s.common.imageViewer}
+>
+  <div class="flex flex-col items-center gap-3">
+    <img id="lightbox-img" src="" alt="" class="max-h-[80vh] max-w-full rounded-[3px] object-contain" />
+    <div class="flex items-center gap-4">
+      <p id="lightbox-cap" class="max-w-[70ch] text-center font-mono text-[11px] text-white/80"></p>
+      <button
+        id="lightbox-close"
+        type="button"
+        class="shrink-0 rounded border border-white/40 px-3 py-1 font-mono text-[11px] text-white/90 transition-colors hover:border-white hover:text-white"
+        >{s.common.close}</button
+      >
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+  const img = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  const cap = document.getElementById('lightbox-cap');
+  const close = document.getElementById('lightbox-close');
+  let opener: HTMLElement | null = null;
+
+  if (dialog && img) {
+    // Images written straight into the markdown body become zoomable too,
+    // so a photo dropped into a project page behaves like a <Figure>.
+    document.querySelectorAll<HTMLImageElement>('.project-body img').forEach((el) => {
+      if (el.closest('[data-zoom]')) return;
+      el.dataset.zoom = el.currentSrc || el.src;
+      el.dataset.zoomAlt = el.alt || '';
+      el.classList.add('cursor-zoom-in');
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-zoom]').forEach((el) => {
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      const open = () => {
+        opener = el;
+        img.src = el.dataset.zoom ?? '';
+        img.alt = el.dataset.zoomAlt ?? '';
+        if (cap) cap.textContent = el.dataset.zoomAlt ?? '';
+        dialog.showModal();
+      };
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+      });
+    });
+
+    close?.addEventListener('click', () => dialog.close());
+    // Clicking the backdrop (outside the image) closes it.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    // Esc is handled natively; return focus where it came from.
+    dialog.addEventListener('close', () => {
+      img.src = '';
+      opener?.focus();
+      opener = null;
+    });
+  }
+</script>

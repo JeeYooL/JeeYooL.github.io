@@ -77,6 +77,44 @@ lives in `src/data/site.ts`. Everything else lives in `src/i18n/ui.ts`.
 Frontmatter is schema-checked in `src/content/config.ts`, so a typo fails the
 build rather than rendering a blank field.
 
+## Images
+
+Source files live in `src/assets/` and are optimized at build time (WebP,
+responsive widths). `public/` is only for files that must be served
+byte-for-byte.
+
+```
+src/assets/projects/<project-slug>/*.jpg|png|svg
+src/assets/publications/*.jpg|png
+```
+
+Reference them from frontmatter with a path relative to `src/assets/<kind>/`:
+
+```yaml
+thumbnail: "mppt-measurement-system/board.jpg"   # list card, cropped to 3:2
+thumbnailAlt: "MPPT measurement board"
+images:
+  - src: "mppt-measurement-system/board.jpg"
+    alt: "MPPT measurement board"                # required
+    caption: "Rev 02 single-channel board."
+    wide: true                                   # full width instead of 2-up
+```
+
+A mistyped filename **fails the build** and prints the available files, so a
+broken image never ships. Use the same `src` in the Korean and English files
+and translate only `alt` and `caption`.
+
+Markdown images work too — put those files in `public/img/` and write
+`![alt](/img/thing.svg)`. Prefer SVG for diagrams.
+
+Everything except list thumbnails opens in a lightbox on click (Esc, backdrop
+click, or the close button dismisses it; keyboard accessible). The lightbox
+loads a 1600px WebP, never the original.
+
+`npm run images` reports source images above 2400px; `npm run images -- --fix`
+resizes them in place and normalizes EXIF rotation. Run it after adding phone
+photos.
+
 ## Design system
 
 Tokens are CSS custom properties in `src/styles/global.css`, exposed to Tailwind

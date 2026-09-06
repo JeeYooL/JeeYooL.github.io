@@ -1,0 +1,72 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { resolveImage } from '../lib/images';
+
+interface Props {
+  /** Path under src/assets/<kind>/, or an absolute /public path. */
+  src: string;
+  kind?: 'projects' | 'publications';
+  alt: string;
+  caption?: string;
+  /** Photographs open in the lightbox; a small thumbnail does not. */
+  zoomable?: boolean;
+  /** Rendered display width hint. */
+  widthClass?: string;
+  /** Crop to a fixed aspect ratio — for thumbnails, where a portrait phone
+   *  photo would otherwise tower over the text beside it. */
+  cover?: boolean;
+  aspectClass?: string;
+  loading?: 'lazy' | 'eager';
+}
+const {
+  src,
+  kind = 'projects',
+  alt,
+  caption,
+  zoomable = true,
+  widthClass = 'w-full',
+  cover = false,
+  aspectClass = 'aspect-[3/2]',
+  loading = 'lazy',
+} = Astro.props;
+
+const img = await resolveImage(src, kind);
+// The lightbox gets a 1600px WebP, not the untouched original — a phone photo
+// straight off the camera is several megabytes and nobody needs that on tap.
+let full: string | undefined;
+if (img) {
+  if (typeof img.src === 'string' || img.isSvg) {
+    full = typeof img.src === 'string' ? img.src : img.src.src;
+  } else {
+    full = (await getImage({ src: img.src, width: Math.min(1600, img.src.width), format: 'webp' })).src;
+  }
+}
+---
+{img && (
+  <figure class:list={['flex flex-col gap-2', widthClass]}>
+    <div
+      class:list={[
+        'overflow-hidden rounded-[3px] border border-line bg-surface',
+        cover && aspectClass,
+        zoomable && 'cursor-zoom-in',
+      ]}
+      data-zoom={zoomable ? full : undefined}
+      data-zoom-alt={zoomable ? alt : undefined}
+    >
+      {img.isSvg || typeof img.src === 'string' ? (
+        <img src={typeof img.src === 'string' ? img.src : img.src.src} alt={alt} loading={loading} decoding="async" class:list={cover ? 'block h-full w-full object-cover' : 'block h-auto w-full'} />
+      ) : (
+        <Image
+          src={img.src}
+          alt={alt}
+          widths={[480, 800, 1200, 1600]}
+          sizes="(max-width: 900px) 100vw, 720px"
+          loading={loading}
+          decoding="async"
+          class:list={cover ? 'block h-full w-full object-cover' : 'block h-auto w-full'}
+        />
+      )}
+    </div>
+    {caption && <figcaption class="font-mono text-[11px] leading-relaxed text-muted">{caption}</figcaption>}
+  </figure>
+)}
