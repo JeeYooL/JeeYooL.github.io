@@ -1,0 +1,261 @@
+---
+/**
+ * Scroll-linked degradation narrative — the centrepiece of the home page.
+ *
+ * A tall section with a sticky panel. Scroll progress maps to time on the
+ * MPPT axis (0 → 2000 h); the curve draws to that time, the readouts count,
+ * and the matching stage lights up.
+ *
+ * Two things the implementation guarantees:
+ *  - Every word is on screen and readable before anything scrolls. Motion only
+ *    changes emphasis, never whether text exists.
+ *  - With `prefers-reduced-motion: reduce`, or with JavaScript off, the curve
+ *    is fully drawn and all four stages are at full contrast.
+ *
+ * Arc length is precomputed per sample so the drawn fraction and the time
+ * readout stay in step — a path drawn by dash offset advances by length, not
+ * by x, and the two diverge badly where the curve is steep.
+ */
+import { t, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+
+const T_MAX = 2000;
+const X0 = 92, X1 = 962, Y_TOP = 70;
+const model = (time: number) =>
+  1 - 0.065 * (1 - Math.exp(-time / 9))
+    + 0.022 * (1 - Math.exp(-time / 70))
+    - 0.055 * (1 - Math.exp(-time / 320))
+    - 0.20 * (1 - Math.exp(-time / 2400));
+
+const px = (time: number) => X0 + (time / T_MAX) * (X1 - X0);
+const py = (pce: number) => Y_TOP + (1 - pce) * 2000; // 2000 units per 1.0 PCE
+
+const N = 400;
+const times = Array.from({ length: N + 1 }, (_, i) => (i / N) * T_MAX);
+const pts = times.map((time) => [px(time), py(model(time))] as const);
+const d = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`).join(' ');
+
+// Cumulative arc length, normalized — index i is the fraction drawn at times[i].
+const cum: number[] = [0];
+for (let i = 1; i <= N; i++) {
+  cum.push(cum[i - 1]! + Math.hypot(pts[i]![0] - pts[i - 1]![0], pts[i]![1] - pts[i - 1]![1]));
+}
+const total = cum[N]!;
+const fractions = cum.map((v) => +(v / total).toFixed(5));
+const traceLen = Math.ceil(total);
+
+let t80 = T_MAX;
+for (let lo = 0, hi = T_MAX, i = 0; i < 60; i++) {
+  const mid = (lo + hi) / 2;
+  if (model(mid) > 0.8) lo = mid; else hi = mid;
+  t80 = lo;
+}
+
+// Stage boundaries in hours; the last one starts at T80.
+const bounds = [0, 60, 320, t80];
+const yTicks = [1.0, 0.95, 0.9, 0.85, 0.8];
+const xTicks = [0, 500, 1000, 1500, 2000];
+---
+<section
+  id="story"
+  class="story relative bg-[#0B100F] text-[#E9EEEC]"
+  data-fractions={JSON.stringify(fractions)}
+  data-tmax={T_MAX}
+  data-t80={t80.toFixed(1)}
+  data-bounds={JSON.stringify(bounds)}
+  style={`--trace-len:${traceLen}`}
+>
+  <div class="mx-auto max-w-[1140px] px-7 pt-16 pb-4">
+    <span class="font-mono text-[11px] uppercase tracking-[0.16em] text-[#63D2C3]">{s.home.story.label}</span>
+    <h2 class="mt-3 max-w-[18ch] text-[clamp(30px,4.4vw,44px)] tracking-[-0.02em] text-[#F3F7F5]">
+      {s.home.story.heading}
+    </h2>
+    <p class="mt-4 max-w-[68ch] text-[16.5px] leading-relaxed text-[#A7B5B1]">{s.home.story.lede}</p>
+  </div>
+
+  <!-- Tall track: its height is what the sticky panel scrubs through. -->
+  <div class="story-track relative">
+    <div class="story-panel mx-auto flex max-w-[1140px] flex-col gap-8 px-7 py-10 lg:h-screen lg:flex-row lg:items-center lg:gap-14 lg:py-0">
+      <!-- Figure -->
+      <div class="flex w-full flex-col gap-4 lg:w-[58%]">
+        <svg viewBox="0 0 1000 620" class="w-full" role="img" aria-label={s.home.story.heading}>
+          {yTicks.map((v) => (
+            <line x1={X0} y1={py(v)} x2={X1} y2={py(v)} stroke="#22302D" stroke-width="1" />
+          ))}
+          {yTicks.map((v) => (
+            <text x={X0 - 12} y={py(v) + 4} text-anchor="end" font-family="var(--font-mono)" font-size="14" fill="#6E7F7B">
+              {v.toFixed(2)}
+            </text>
+          ))}
+          {xTicks.map((time) => (
+            <text x={px(time)} y="576" text-anchor="middle" font-family="var(--font-mono)" font-size="14" fill="#6E7F7B">
+              {time}
+            </text>
+          ))}
+          <line x1={X0} y1="552" x2={X1} y2="552" stroke="#3A4B47" stroke-width="1" />
+          <text x={X0 - 12} y="34" font-family="var(--font-mono)" font-size="14" fill="#6E7F7B">{s.home.figureAxisY}</text>
+          <text x={X1} y="606" text-anchor="end" font-family="var(--font-mono)" font-size="14" fill="#6E7F7B">
+            {s.home.figureAxisX}
+          </text>
+
+          <!-- T80 marker: revealed only once the trace reaches it -->
+          <g class="story-t80" opacity="0">
+            <line x1={px(t80)} y1={py(0.8)} x2={px(t80)} y2="552" stroke="#DB9F6C" stroke-width="1" stroke-dasharray="3 3" />
+            <circle cx={px(t80)} cy={py(0.8)} r="5.5" fill="#DB9F6C" />
+            <text x={px(t80) - 10} y={py(0.8) - 16} text-anchor="end" font-family="var(--font-mono)" font-size="15" fill="#DB9F6C">
+              T80 {Math.round(t80)} h
+            </text>
+          </g>
+
+          <path
+            class="story-trace"
+            d={d}
+            fill="none"
+            stroke="#63D2C3"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <!-- Leading dot rides the drawn end of the trace -->
+          <circle class="story-head" r="6" fill="#63D2C3" opacity="0" cx={X0} cy={py(1)} />
+        </svg>
+
+        <div class="flex flex-wrap gap-x-10 gap-y-2 border-t border-[#22302D] pt-4 font-mono text-[12px]">
+          <span class="text-[#6E7F7B]">
+            {s.home.story.elapsed}
+            <b class="story-hours ml-2 text-[16px] font-medium tabular-nums text-[#F3F7F5]">{T_MAX}</b>
+            <span class="ml-1 text-[#6E7F7B]">h</span>
+          </span>
+          <span class="text-[#6E7F7B]">
+            {s.home.story.remaining}
+            <b class="story-pce ml-2 text-[16px] font-medium tabular-nums text-[#F3F7F5]">
+              {(model(T_MAX) * 100).toFixed(1)}
+            </b>
+            <span class="ml-1 text-[#6E7F7B]">%</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Stages. All four are always present; the active one gains contrast. -->
+      <ol class="flex w-full flex-col gap-5 lg:w-[42%]">
+        {s.home.story.stages.map((stage, i) => (
+          <li class="story-stage flex gap-4 border-l-2 border-[#22302D] pl-5 transition-[opacity,border-color] duration-500" data-stage={i}>
+            <div class="flex flex-col gap-1.5">
+              <span class="font-mono text-[11px] tracking-[0.1em] text-[#DB9F6C]">{stage.tag}</span>
+              <h3 class="text-[20px] text-[#F3F7F5]">{stage.title}</h3>
+              <p class="max-w-[46ch] text-[14.5px] leading-relaxed text-[#A7B5B1]">{stage.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-[1140px] px-7 pb-16">
+    <p class="font-mono text-[11px] text-[#5F706C]">{s.home.story.footnote}</p>
+  </div>
+</section>
+
+<style>
+  /* Resting state — what a reader sees with no JS and what reduced motion keeps.
+     The trace is fully drawn and every stage is legible. */
+  .story-trace { stroke-dasharray: var(--trace-len); stroke-dashoffset: 0; }
+  .story-stage { opacity: 1; }
+
+  @media (min-width: 1024px) {
+    .story-track { height: 340vh; }
+    .story-panel { position: sticky; top: 0; }
+  }
+
+  /* Only once the script takes over does anything start hidden. */
+  :global(html.story-live) .story-stage { opacity: 0.34; }
+  :global(html.story-live) .story-stage.is-active { opacity: 1; border-color: #63D2C3; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .story-track { height: auto; }
+    .story-panel { position: static; }
+    :global(html.story-live) .story-stage { opacity: 1; }
+    .story-t80 { opacity: 1 !important; }
+  }
+</style>
+
+<script>
+  const section = document.getElementById('story');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function run() {
+    if (!section || reduce.matches || !window.matchMedia('(min-width: 1024px)').matches) return;
+
+    const trace = section.querySelector<SVGPathElement>('.story-trace');
+    const head = section.querySelector<SVGCircleElement>('.story-head');
+    const t80g = section.querySelector<SVGGElement>('.story-t80');
+    const hours = section.querySelector<HTMLElement>('.story-hours');
+    const pce = section.querySelector<HTMLElement>('.story-pce');
+    const stages = Array.from(section.querySelectorAll<HTMLElement>('.story-stage'));
+    const track = section.querySelector<HTMLElement>('.story-track');
+    if (!trace || !track) return;
+
+    const fractions: number[] = JSON.parse(section.dataset.fractions ?? '[]');
+    const bounds: number[] = JSON.parse(section.dataset.bounds ?? '[]');
+    const T_MAX = Number(section.dataset.tmax ?? 2000);
+    const t80 = Number(section.dataset.t80 ?? 1718);
+    const len = trace.getTotalLength();
+    const N = fractions.length - 1;
+
+    document.documentElement.classList.add('story-live');
+
+    const model = (time: number) =>
+      1 - 0.065 * (1 - Math.exp(-time / 9))
+        + 0.022 * (1 - Math.exp(-time / 70))
+        - 0.055 * (1 - Math.exp(-time / 320))
+        - 0.20 * (1 - Math.exp(-time / 2400));
+
+    let ticking = false;
+    const draw = () => {
+      ticking = false;
+      const rect = track.getBoundingClientRect();
+      const span = rect.height - window.innerHeight;
+      const p = span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 1;
+
+      // Scroll maps to time on a curve, not linearly: burn-in happens in the
+      // first 60 of 2000 hours and would otherwise flash past in 3% of the
+      // scroll. The exponent gives the early regimes room to be read.
+      // Time finishes at 85% of the track, so T80 — the point of the whole
+      // section — stays on screen while the reader finishes the last panel.
+      const tp = Math.pow(Math.min(1, p / 0.85), 1.8);
+      const time = tp * T_MAX;
+      const idx = Math.min(N, Math.max(0, tp * N));
+      const lo = Math.floor(idx);
+      const frac = fractions[lo]! + (fractions[Math.min(N, lo + 1)]! - fractions[lo]!) * (idx - lo);
+
+      trace.style.strokeDasharray = String(len);
+      trace.style.strokeDashoffset = String(len * (1 - frac));
+
+      if (head) {
+        const pt = trace.getPointAtLength(len * frac);
+        head.setAttribute('cx', String(pt.x));
+        head.setAttribute('cy', String(pt.y));
+        head.setAttribute('opacity', p > 0.005 && p < 0.999 ? '1' : '0');
+      }
+      if (t80g) t80g.setAttribute('opacity', time >= t80 ? '1' : '0');
+      if (hours) hours.textContent = Math.round(time).toLocaleString();
+      if (pce) pce.textContent = (model(time) * 100).toFixed(1);
+
+      let active = 0;
+      for (let i = 0; i < bounds.length; i++) if (time >= bounds[i]!) active = i;
+      stages.forEach((el, i) => el.classList.toggle('is-active', i === active));
+    };
+
+    const onScroll = () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(draw); }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    draw();
+  }
+
+  run();
+</script>

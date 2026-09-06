@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import DegradationTrace from '../components/DegradationTrace.astro';
+import StoryScroll from '../components/StoryScroll.astro';
 import { t, type Lang } from '../i18n/ui';
 import { localePath, splitId } from '../i18n/utils';
 import { site } from '../data/site';
@@ -23,30 +23,68 @@ const featured = (await getCollection('publications'))
 <Base lang={lang} title={s.home.title} description={s.home.description} scrollNav={true}>
   <div id="scroll-progress" class="fixed left-0 top-0 z-40 h-[2px] w-0 bg-accent" aria-hidden="true"></div>
 
-  <div class="mx-auto max-w-[1140px] px-7 pb-24">
-    <!-- Hero: the degradation curve is the structure, not decoration -->
-    <section class="grid gap-10 pt-14 pb-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-end">
-      <div class="flex flex-col gap-5">
-        <h1 class="max-w-[20ch] text-[clamp(32px,5vw,46px)] tracking-[-0.025em]">{s.tagline}</h1>
-        <p class="max-w-[52ch] text-[17px] text-ink-2">{s.intro}</p>
-        <div class="flex flex-wrap gap-2 pt-1">
+  <!-- Dark opening chapter: the hero and the degradation story share one ground,
+       then the page turns back to the reading theme. -->
+  <section class="relative bg-[#0B100F] text-[#E9EEEC]">
+    <div class="mx-auto flex max-w-[1140px] flex-col gap-14 px-7 pt-20 pb-16 md:pt-28 md:pb-20">
+     <div class="grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-16">
+      <div class="flex flex-col gap-6">
+        <span class="hero-in mono-label text-[#63D2C3]" style="--i:0">{s.affiliation}</span>
+        <h1 class="hero-in max-w-[17ch] text-[clamp(38px,7vw,72px)] leading-[1.06] tracking-[-0.03em] text-[#F3F7F5]" style="--i:1">
+          {s.tagline}
+        </h1>
+        <p class="hero-in max-w-[56ch] text-[clamp(16px,1.5vw,19px)] leading-relaxed text-[#A7B5B1]" style="--i:2">
+          {s.intro}
+        </p>
+        <div class="hero-in flex flex-wrap gap-2 pt-2" style="--i:3">
           <a
             href={localePath('/projects/', lang)}
-            class="rounded-[4px] bg-accent px-4 py-2 text-[14px] font-medium text-bg no-underline transition-colors hover:bg-accent-deep"
+            class="rounded-[4px] bg-[#63D2C3] px-5 py-2.5 text-[14px] font-medium text-[#0B100F] no-underline transition-colors hover:bg-[#8FE4D8]"
             >{s.common.seeProjects}</a
           >
-          {site.links.cvPdf ? (
-            <a href={site.links.cvPdf} class="chip px-4 py-2 text-[13px] no-underline hover:border-accent hover:text-accent">{s.common.resumePdf}</a>
-          ) : (
-            <span class="chip cursor-not-allowed px-4 py-2 text-[13px] opacity-60" title={s.common.resumePdfTitle}>{s.common.resumePending}</span>
-          )}
+          <a
+            href="#story"
+            class="rounded-[4px] border border-[#3A4B47] px-5 py-2.5 text-[14px] text-[#D6DEDB] no-underline transition-colors hover:border-[#63D2C3] hover:text-[#63D2C3]"
+            >{s.home.story.heading}</a
+          >
         </div>
       </div>
-      <DegradationTrace lang={lang} />
-    </section>
 
+      <!-- Structural index: what the site is made of, before you scroll into it -->
+      <nav class="hero-in flex flex-col justify-end gap-0 lg:pb-2" style="--i:3" aria-label={s.home.researchTitle}>
+        <span class="mono-label border-b border-[#22302D] pb-3 text-[#7E8E8A]">{s.home.researchTitle}</span>
+        {thrusts.map((thrust, i) => (
+          <a
+            href={localePath('/research/', lang)}
+            class="group flex items-baseline gap-4 border-b border-[#22302D] py-4 no-underline"
+          >
+            <span class="font-mono text-[11px] tabular-nums text-[#63D2C3]">{String(i + 1).padStart(2, '0')}</span>
+            <span class="text-[15.5px] leading-snug text-[#A7B5B1] transition-colors group-hover:text-[#F3F7F5]">
+              {thrust.data.title}
+            </span>
+          </a>
+        ))}
+      </nav>
+     </div>
+
+      <dl class="hero-in grid grid-cols-2 gap-px border-t border-[#22302D] bg-[#22302D] md:grid-cols-4" style="--i:4">
+        {s.home.stats.map((stat) => (
+          <div class="flex flex-col gap-1.5 bg-[#0B100F] px-1 pt-5 md:px-0">
+            <dd class="font-display text-[clamp(28px,3.4vw,40px)] leading-none tabular-nums text-[#F3F7F5]">
+              <span class="count" data-to={stat.value}>{stat.value}</span><span class="text-[0.55em] text-[#63D2C3]">{stat.unit}</span>
+            </dd>
+            <dt class="font-mono text-[11px] leading-snug text-[#7E8E8A]">{stat.label}</dt>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <StoryScroll lang={lang} />
+
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
     <!-- Highlights: text blocks, not cards -->
-    <section class="band" id="highlights">
+    <section class="band border-t-0 pt-14" id="highlights">
       <div class="flex flex-col gap-1.5">
         <span class="mono-label">{s.home.highlightsLabel}</span>
         <h2 class="text-[21px]">{s.home.highlightsTitle}</h2>
@@ -165,7 +203,39 @@ const featured = (await getCollection('publications'))
   </div>
 </Base>
 
+<style>
+  /* Load-time entrance. Not scroll-triggered: the page is legible the moment
+     it paints, and this only staggers the arrival. */
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .hero-in { animation: heroIn 620ms cubic-bezier(0.22, 0.8, 0.3, 1) both; animation-delay: calc(var(--i) * 90ms); }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-in { animation: none; }
+  }
+</style>
+
 <script>
+  // Stat count-up. The final value is already in the HTML, so the numbers are
+  // correct with JavaScript off; this only animates towards them.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion) {
+    document.querySelectorAll<HTMLElement>('.count').forEach((el) => {
+      const to = Number(el.dataset.to ?? '0');
+      if (!Number.isFinite(to) || to === 0) return;
+      const started = performance.now();
+      const dur = 900;
+      const step = (now: number) => {
+        const p = Math.min(1, (now - started) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(to * eased).toLocaleString();
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
   // Reading position. The only scroll effect on the page — there are no
   // scroll-triggered entrance animations by design.
   const bar = document.getElementById('scroll-progress');

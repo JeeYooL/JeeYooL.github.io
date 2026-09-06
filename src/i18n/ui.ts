@@ -21,7 +21,7 @@ export const ui = {
     affiliation: 'UNIST · LEHMS · 석상일 교수 연구실',
     affiliationPlain: 'UNIST LEHMS — 석상일 교수 연구실',
     location: '울산광역시, 대한민국',
-    tagline: '페로브스카이트 태양전지, op-amp에서 Pareto front까지.',
+    tagline: '페로브스카이트 태양전지, op\u2011amp에서 Pareto front까지.',
     intro:
       '보통 세 사람이 나눠 맡는 세 개의 층 — 직접 만든 계측 장비, 물리 기반 열화 모델, 머신러닝 소재 설계 — 을 한 사람이 이어서 다룹니다.',
 
@@ -101,6 +101,44 @@ export const ui = {
       projectsTitle: '다섯 개의 제작물',
       publicationsLabel: '논문',
       publicationsTitle: '공동 1저자',
+      stats: [
+        { value: 8, unit: '편', label: '동료평가 논문 (공동 1저자 3편)' },
+        { value: 12, unit: 'ch', label: '자체 제작 MPPT 측정 채널' },
+        { value: 1718, unit: 'h', label: '모델이 예측한 T80' },
+        { value: 3, unit: '곳', label: '거쳐온 연구그룹 (2개국)' },
+      ],
+      story: {
+        label: '열화 곡선',
+        heading: '이 소자는 어떻게 죽는가',
+        lede:
+          '아래 곡선은 1-sun 연속 구동에서 정규화 효율이 떨어지는 모습입니다. 하나의 매끄러운 감쇠처럼 보이지만, 실제로는 서로 다른 물리를 가진 네 개의 구간이 겹쳐 있습니다. 스크롤하면 순서대로 지나갑니다.',
+        elapsed: '경과',
+        remaining: '잔존 효율',
+        stages: [
+          {
+            tag: '0 – 60 h',
+            title: '번인',
+            body: '처음 며칠이 가장 가파릅니다. 계면의 얕은 트랩이 채워지고 이온이 자리를 잡는 구간이며, 시상수는 9시간 수준입니다. 여기서 잃은 6.5%는 대부분 돌아오지 않습니다.',
+          },
+          {
+            tag: '60 – 320 h',
+            title: '광침지 회복',
+            body: '그런데 곡선이 잠깐 되돌아옵니다. 광조사가 일부 결함을 되돌리는 self-healing 구간입니다. 지상에서는 2%대의 작은 항이지만, 양성자 조사 환경에서는 이 항이 수명 예측을 통째로 바꿉니다.',
+          },
+          {
+            tag: '320 h –',
+            title: '장기 감쇠',
+            body: '이후는 두 개의 감쇠항이 지배합니다. 빠른 쪽(τ ≈ 320 h)은 수송층 계면, 느린 쪽(τ ≈ 2400 h)은 흡수층 자체의 조성 변화입니다. 수명을 정하는 것은 느린 쪽이고, 제가 예측하려는 것도 그것입니다.',
+          },
+          {
+            tag: '≈ 1,718 h',
+            title: 'T80',
+            body: '초기 효율의 80%에 도달하는 시점입니다. 논문에 실리는 숫자는 이것 하나지만, 그 숫자를 만드는 것은 위의 세 항 전부입니다. 그래서 효율만 최적화하는 모델은 이 지점을 맞히지 못합니다.',
+          },
+        ],
+        footnote:
+          '3-exponential 모델로 생성한 합성 곡선입니다. 실측 MPPT 데이터로 대체할 예정입니다.',
+      },
       recentLabel: '최근',
       recentTitle: '요즘',
       recent: [
@@ -246,7 +284,7 @@ export const ui = {
     affiliation: 'UNIST · LEHMS · Sang Il Seok group',
     affiliationPlain: 'UNIST, LEHMS — Sang Il Seok group',
     location: 'Ulsan, Republic of Korea',
-    tagline: 'Perovskite solar cells, from op-amp to Pareto front.',
+    tagline: 'Perovskite solar cells, from op\u2011amp to Pareto front.',
     intro:
       'I work across three layers that are usually held by three different people: custom measurement hardware, physics-based degradation models, and machine-learning materials design.',
 
@@ -326,6 +364,43 @@ export const ui = {
       projectsTitle: 'Five builds',
       publicationsLabel: 'Publications',
       publicationsTitle: 'Co-first author',
+      stats: [
+        { value: 8, unit: '', label: 'peer-reviewed papers (3 as co-first)' },
+        { value: 12, unit: 'ch', label: 'self-built MPPT measurement channels' },
+        { value: 1718, unit: 'h', label: 'modelled T80' },
+        { value: 3, unit: '', label: 'research groups, two countries' },
+      ],
+      story: {
+        label: 'Degradation',
+        heading: 'How a perovskite cell dies',
+        lede:
+          'The curve below is normalized efficiency under continuous 1-sun operation. It looks like one smooth decay, but four regimes with different physics are stacked inside it. Scroll to pass through them in order.',
+        elapsed: 'Elapsed',
+        remaining: 'Remaining',
+        stages: [
+          {
+            tag: '0 – 60 h',
+            title: 'Burn-in',
+            body: 'The first days are the steepest. Shallow interfacial traps fill and mobile ions settle, on a time constant near 9 hours. Most of the 6.5% lost here never comes back.',
+          },
+          {
+            tag: '60 – 320 h',
+            title: 'Light-soaking recovery',
+            body: 'Then the curve turns back up. Illumination reverses part of the damage — self-healing. On the ground it is a 2% term; under proton irradiation it rewrites the lifetime prediction entirely.',
+          },
+          {
+            tag: '320 h onward',
+            title: 'Long-term decay',
+            body: 'Two decay terms take over. The faster one (τ ≈ 320 h) is the transport-layer interface; the slower one (τ ≈ 2400 h) is compositional change in the absorber itself. The slow term sets the lifetime, and it is the one I am trying to predict.',
+          },
+          {
+            tag: '≈ 1,718 h',
+            title: 'T80',
+            body: 'The point where the cell reaches 80% of its initial efficiency. One number goes into the paper, but all three terms above produce it — which is why a model that optimizes efficiency alone never lands on it.',
+          },
+        ],
+        footnote: 'Synthetic curve from a three-exponential model, standing in until measured MPPT data replaces it.',
+      },
       recentLabel: 'Recent',
       recentTitle: 'Lately',
       recent: [

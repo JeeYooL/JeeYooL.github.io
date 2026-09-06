@@ -77,6 +77,42 @@ lives in `src/data/site.ts`. Everything else lives in `src/i18n/ui.ts`.
 Frontmatter is schema-checked in `src/content/config.ts`, so a typo fails the
 build rather than rendering a blank field.
 
+## The home page
+
+The home page opens with a dark chapter — hero and degradation story share one
+ground — and then returns to the reading theme for the rest. Detail pages are
+deliberately quiet; nothing there is scroll-driven.
+
+`src/components/StoryScroll.astro` is the scroll-linked section. Scroll progress
+maps to time on the MPPT axis, and the curve draws to that time while the
+readouts count and the matching stage lights up.
+
+Three things it guarantees:
+
+- **Every word is on screen before anything scrolls.** Motion changes emphasis,
+  never whether text exists. The resting CSS has the trace fully drawn and all
+  four stages at full contrast; only once the script attaches does anything dim.
+- **Arc length is precomputed per sample**, so the drawn fraction and the time
+  readout stay in step. A path drawn by dash offset advances by length, not by
+  x, and the two diverge badly where the curve is steep.
+- **`prefers-reduced-motion: reduce` collapses it** to a single static panel —
+  no sticky track, no dimming, T80 marker visible.
+
+Knobs, all in that one file:
+
+| What | Where |
+| --- | --- |
+| Scroll length | `.story-track { height: 340vh }` |
+| Early-regime dwell | the `Math.pow(…, 1.8)` exponent — burn-in is 60 of 2000 hours and would otherwise flash past |
+| Hold at the end | `p / 0.85` — time finishes at 85% so T80 stays up while the last panel is read |
+| Stage boundaries | `bounds = [0, 60, 320, t80]`, in hours |
+| Stage copy | `home.story.stages` in `src/i18n/ui.ts` |
+| Hero stat tiles | `home.stats` in `src/i18n/ui.ts` |
+
+The hero's entrance is a load-time CSS animation, not scroll-triggered, and the
+stat tiles carry their final values in the HTML — the count-up only animates
+towards numbers that are already correct with JavaScript off.
+
 ## Images
 
 Source files live in `src/assets/` and are optimized at build time (WebP,
