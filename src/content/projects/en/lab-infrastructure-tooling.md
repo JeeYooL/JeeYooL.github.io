@@ -22,7 +22,7 @@ Three tools, each aimed at one of those.
 
 **Instrument data extractor** — EQE, PL and UV–Vis outputs arrive in three unrelated formats. Drag the files in, get one Excel report out. Built for the LEHMS group and in use there.
 
-**Keithley SMU GUI** — a Python measurement program for the 2636B and 2401, written because the measurements that matter here are not the ones the vendor front panel exposes.
+**Keithley SMU GUI** — a Python measurement program for the 2461, written because the measurements that matter here are not the ones the vendor front panel exposes.
 
 ## Result
 

@@ -258,7 +258,7 @@ export const ui = {
           items: [
             'Arduino 및 임베디드 C, I²C 센서 연동 (INA226, MCP4725)',
             '아날로그 프론트엔드 설계 및 디버깅',
-            'Keithley 2636B / 2401 SMU 제어, 자체 제작 Python GUI',
+            'Keithley 2461 SMU 제어, 자체 제작 Python GUI',
             'Metrohm Autolab PGSTAT302N + FRA32M 임피던스 분광',
             'Tektronix MDO34 오실로스코프, Keysight 33500B 함수발생기',
             'ISOS 프로토콜 기반 MPPT 안정성 추적, operando 지그 설계',
@@ -520,7 +520,7 @@ export const ui = {
           items: [
             'Arduino and embedded C; I²C sensor integration (INA226, MCP4725)',
             'Analog front-end design and debugging',
-            'Keithley 2636B / 2401 SMU control, with a self-written Python GUI',
+            'Keithley 2461 SMU control, with a self-written Python GUI',
             'Metrohm Autolab PGSTAT302N + FRA32M impedance spectroscopy',
             'Tektronix MDO34 oscilloscope, Keysight 33500B function generator',
             'MPPT stability tracking to ISOS protocols; operando jig design',
