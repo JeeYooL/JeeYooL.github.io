@@ -1,0 +1,100 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { href } from '../../data/site';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({ params: { slug: p.id }, props: { project: p } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const idx = all.findIndex((p) => p.id === project.id);
+const prev = all[idx - 1];
+const next = all[idx + 1];
+---
+<Base title={project.data.title} description={project.data.oneLiner}>
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
+    <header class="flex flex-col gap-4 border-b border-line pt-14 pb-8">
+      <a class="mono-label no-underline hover:text-accent" href={href('/projects/')}>Projects</a>
+      <h1 class="max-w-[24ch] text-[clamp(30px,4.4vw,42px)] tracking-[-0.02em]">{project.data.title}</h1>
+      <p class="max-w-[70ch] text-[17px] text-ink-2">{project.data.oneLiner}</p>
+      <div class="flex flex-wrap items-center gap-2 pt-1">
+        {project.data.tags.map((t) => <span class="chip">{t}</span>)}
+        {project.data.status && (
+          <span class:list={['chip', project.data.accent === 'signal' ? 'border-signal/40 text-signal' : 'border-accent/40 text-accent']}>
+            {project.data.status}
+          </span>
+        )}
+      </div>
+    </header>
+
+    <article class="project-body max-w-[74ch] pt-10">
+      <Content />
+    </article>
+
+    <nav class="mt-16 flex flex-wrap justify-between gap-6 border-t border-line-strong pt-6" aria-label="Project navigation">
+      {prev ? (
+        <a class="flex flex-col gap-1 no-underline" href={href(`/projects/${prev.id}/`)}>
+          <span class="mono-label">Previous</span>
+          <span class="font-display text-[17px] hover:text-accent">{prev.data.title}</span>
+        </a>
+      ) : <span />}
+      {next && (
+        <a class="flex flex-col gap-1 text-right no-underline" href={href(`/projects/${next.id}/`)}>
+          <span class="mono-label">Next</span>
+          <span class="font-display text-[17px] hover:text-accent">{next.data.title}</span>
+        </a>
+      )}
+    </nav>
+  </div>
+</Base>
+
+<style is:global>
+  /* The four-block template: Problem / Approach / Result / Links.
+     Every project page renders through these rules, so the blocks line up
+     from one project to the next. */
+  .project-body > h2 {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    border-top: 1px solid var(--c-line);
+    padding-top: 14px;
+    margin: 40px 0 14px;
+  }
+  .project-body > h2:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+  .project-body > h3 {
+    font-size: 18px;
+    margin: 28px 0 8px;
+  }
+  .project-body p { margin: 0 0 16px; color: var(--c-ink-2); font-size: 16px; }
+  .project-body strong { color: var(--c-ink); font-weight: 600; }
+  .project-body em { color: var(--c-signal); font-style: normal; }
+  .project-body a { color: var(--c-accent); border-bottom: 1px solid color-mix(in srgb, var(--c-accent) 35%, transparent); text-decoration: none; }
+  .project-body a:hover { color: var(--c-accent-deep); }
+  .project-body ul, .project-body ol { margin: 0 0 18px; padding-left: 1.2em; display: flex; flex-direction: column; gap: 8px; }
+  .project-body li { color: var(--c-ink-2); font-size: 16px; }
+  .project-body ol { list-style: decimal; }
+  .project-body ul { list-style: none; padding-left: 0; }
+  .project-body ul > li { padding-left: 1.1em; position: relative; }
+  .project-body ul > li::before {
+    content: "";
+    position: absolute; left: 0; top: 0.72em;
+    width: 6px; height: 1px; background: var(--c-line-strong);
+  }
+  .project-body code {
+    font-family: var(--font-mono); font-size: 0.88em;
+    background: var(--c-surface); border: 1px solid var(--c-line);
+    border-radius: 3px; padding: 1px 5px;
+  }
+  .project-body pre {
+    background: var(--c-surface); border: 1px solid var(--c-line);
+    border-radius: 4px; padding: 14px 16px; overflow-x: auto; margin: 0 0 18px;
+  }
+  .project-body pre code { background: none; border: 0; padding: 0; }
+</style>

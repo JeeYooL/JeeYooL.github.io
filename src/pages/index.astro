@@ -1,0 +1,190 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import DegradationTrace from '../components/DegradationTrace.astro';
+import { site, href } from '../data/site';
+
+const thrusts = (await getCollection('thrusts')).sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featured = (await getCollection('publications'))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const highlights = [
+  {
+    lead: '8 publications',
+    body: 'three of them as co-first author, including two in <i>Nature Energy</i> — green-solvent processing of FAPbI₃, and α-phase stabilization that held its efficiency through 2,000 h of continuous operation.',
+  },
+  {
+    lead: '12-channel MPPT measurement system',
+    body: 'designed from schematic through firmware, debugged down to the calibration register, and now scaling to three temperature-controlled operando jigs in the lab.',
+  },
+  {
+    lead: 'Space-environment degradation pipeline',
+    body: 'linking orbital radiation transport — SPENVIS, SRIM, SR-NIEL — to device simulation and a predicted lifetime, so stability can be estimated before a cell is ever flown.',
+  },
+];
+
+const recent = [
+  { when: '2026', what: 'Co-first-author paper on humidity-robust module fabrication published in <i>ACS Applied Materials & Interfaces</i>; blade-coated mini-modules at 12, 36 and 72 cm².' },
+  { when: '2025.10', what: 'Returned to UNIST as a postdoctoral researcher in the Sang Il Seok group, after postdocs at Northwestern and the University of Toledo.' },
+  { when: 'In progress', what: 'Rev 03 of the 12-channel MPPT board in fabrication, together with three 2×2 operando temperature-controlled measurement jigs.' },
+];
+---
+<Base title={site.name} scrollNav={true}>
+  <div id="scroll-progress" class="fixed left-0 top-0 z-40 h-[2px] w-0 bg-accent" aria-hidden="true"></div>
+
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
+    <!-- Hero: the degradation curve is the structure, not decoration -->
+    <section class="grid gap-10 pt-14 pb-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-end">
+      <div class="flex flex-col gap-5">
+        <h1 class="max-w-[20ch] text-[clamp(34px,5.2vw,46px)] tracking-[-0.025em]">{site.tagline}</h1>
+        <p class="max-w-[52ch] text-[17px] text-ink-2">{site.intro}</p>
+        <div class="flex flex-wrap gap-2 pt-1">
+          <a
+            href={href('/projects/')}
+            class="rounded-[4px] bg-accent px-4 py-2 text-[14px] font-medium text-bg no-underline transition-colors hover:bg-accent-deep"
+            >See the projects</a
+          >
+          {site.links.cvPdf ? (
+            <a href={site.links.cvPdf} class="chip px-4 py-2 text-[13px] no-underline hover:border-accent hover:text-accent">Résumé (PDF)</a>
+          ) : (
+            <span class="chip cursor-not-allowed px-4 py-2 text-[13px] opacity-60" title="PDF not published yet">Résumé — pending</span>
+          )}
+        </div>
+      </div>
+      <DegradationTrace />
+    </section>
+
+    <!-- Highlights: text blocks, not cards -->
+    <section class="band" id="highlights">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">In short</span>
+        <h2 class="text-[21px]">Three things</h2>
+      </div>
+      <div class="flex flex-col gap-7">
+        {highlights.map((h) => (
+          <div class="flex max-w-[74ch] flex-col gap-1">
+            <p class="font-display text-[20px] font-semibold">{h.lead}</p>
+            <p class="text-[15.5px] text-ink-2" set:html={h.body} />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Research thrusts -->
+    <section class="band" id="research">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">Research</span>
+        <h2 class="text-[21px]">Three thrusts</h2>
+        <a class="link mt-1 w-fit text-[13px]" href={href('/research/')}>Full research page</a>
+      </div>
+      <div class="flex flex-col gap-8">
+        {thrusts.map((t, i) => (
+          <div class="flex flex-col gap-2">
+            <div class="flex items-baseline gap-3">
+              <span class="font-mono text-[11px] tracking-[0.13em] text-muted tabular-nums">THRUST {i + 1}</span>
+            </div>
+            <h3 class="text-[19px]">{t.data.title}</h3>
+            <p class="max-w-[74ch] text-[15px] text-ink-2">{t.body?.trim()}</p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              {t.data.keywords.map((k) => <span class="chip">{k}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="band" id="projects">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">Projects</span>
+        <h2 class="text-[21px]">Five builds</h2>
+        <a class="link mt-1 w-fit text-[13px]" href={href('/projects/')}>All projects</a>
+      </div>
+      <ul class="flex flex-col">
+        {projects.map((p) => (
+          <li class="border-t border-line first:border-t-0 first:pt-0">
+            <a href={href(`/projects/${p.id}/`)} class="group grid gap-2 py-5 no-underline sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline sm:gap-8">
+              <div class="flex flex-col gap-1.5">
+                <h3 class:list={['text-[19px] transition-colors', p.data.accent === 'signal' ? 'group-hover:text-signal' : 'group-hover:text-accent']}>
+                  {p.data.title}
+                </h3>
+                <p class="max-w-[70ch] text-[14.5px] text-ink-2">{p.data.oneLiner}</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                {p.data.tags.map((t) => <span class="chip">{t}</span>)}
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Selected publications -->
+    <section class="band" id="publications">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">Publications</span>
+        <h2 class="text-[21px]">Co-first author</h2>
+        <a class="link mt-1 w-fit text-[13px]" href={href('/publications/')}>All 8 papers</a>
+      </div>
+      <ul class="flex flex-col">
+        {featured.map((p) => (
+          <li class="flex flex-col gap-2 border-t border-line py-5 first:border-t-0 first:pt-0">
+            <div class="flex flex-wrap items-baseline gap-x-3">
+              <span class="font-mono text-[12px] tabular-nums text-muted">{p.data.year}</span>
+              <span class="font-mono text-[12px] italic text-ink-2">{p.data.venue}</span>
+            </div>
+            <h3 class="max-w-[70ch] text-[18px]">
+              <a class="link" href={`https://doi.org/${p.data.doi}`} rel="noopener" target="_blank">{p.data.title}</a>
+            </h3>
+            <p class="max-w-[74ch] text-[14.5px] text-ink-2">{p.data.contribution}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Recent -->
+    <section class="band" id="recent">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">Recent</span>
+        <h2 class="text-[21px]">Lately</h2>
+      </div>
+      <ul class="flex flex-col">
+        {recent.map((r) => (
+          <li class="grid gap-2 border-t border-line py-4 first:border-t-0 first:pt-0 sm:grid-cols-[120px_minmax(0,1fr)] sm:gap-6">
+            <span class="font-mono text-[12px] tabular-nums text-muted">{r.when}</span>
+            <p class="max-w-[70ch] text-[15px] text-ink-2" set:html={r.what} />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="flex flex-wrap items-baseline justify-between gap-6 border-t border-line-strong pt-10">
+      <p class="max-w-[46ch] font-display text-[21px]">
+        The hardware, the model and the screening pipeline are one loop. The projects are where that
+        loop is visible.
+      </p>
+      <a
+        href={href('/projects/')}
+        class="rounded-[4px] bg-accent px-4 py-2 text-[14px] font-medium text-bg no-underline transition-colors hover:bg-accent-deep"
+        >See the projects</a
+      >
+    </section>
+  </div>
+</Base>
+
+<script>
+  // Reading position. The only scroll effect on the page — there are no
+  // scroll-triggered entrance animations by design.
+  const bar = document.getElementById('scroll-progress');
+  if (bar) {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = max > 0 ? `${Math.min(100, (window.scrollY / max) * 100)}%` : '0%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

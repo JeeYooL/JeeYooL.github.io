@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props {
+  pub: CollectionEntry<'publications'>['data'];
+  /** Featured cards carry the contribution paragraph; the full list stays as
+   *  a citation line so the three featured papers are not repeated at length. */
+  variant?: 'featured' | 'list';
+}
+const { pub, variant = 'list' } = Astro.props;
+const featured = variant === 'featured';
+const doiUrl = pub.doi ? `https://doi.org/${pub.doi}` : undefined;
+
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// Built as one string so commas never wrap onto a line of their own.
+const authorHtml = pub.authors
+  .map((a, i) => (i === pub.selfIndex ? `<b class="font-semibold text-ink">${esc(a)}</b>` : esc(a)))
+  .join(', ');
+---
+<article
+  class:list={['flex flex-col gap-2.5', featured ? 'border-t-2 border-line-strong py-7' : 'border-t border-line py-5']}
+  data-tags={pub.tags.join('|')}
+>
+  <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+    <span class="font-mono text-[12px] tabular-nums text-muted">{pub.year}</span>
+    <span class="font-mono text-[12px] italic text-ink-2">{pub.venue}</span>
+    {pub.volume && <span class="font-mono text-[12px] tabular-nums text-muted">{pub.volume}, {pub.pages}</span>}
+    {pub.role && (
+      <span class="rounded-[3px] bg-accent-wash px-2 py-[2px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-accent">Co-first</span>
+    )}
+    {pub.openAccess && (
+      <span class="rounded-[3px] bg-signal-wash px-2 py-[2px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-signal">Open access</span>
+    )}
+  </div>
+
+  <h3 class:list={['max-w-[74ch] font-display font-semibold', featured ? 'text-[21px]' : 'text-[17px]']}>
+    {doiUrl ? <a class="link" href={doiUrl} rel="noopener" target="_blank">{pub.title}</a> : pub.title}
+  </h3>
+
+  <p class="max-w-[78ch] text-[13px] leading-relaxed text-muted" set:html={authorHtml} />
+
+  {featured && <p class="max-w-[74ch] pt-1 text-[15px] text-ink-2">{pub.contribution}</p>}
+
+  <div class="flex flex-wrap items-center gap-2 pt-1">
+    {doiUrl && <a class="chip no-underline hover:border-accent hover:text-accent" href={doiUrl} rel="noopener" target="_blank">DOI</a>}
+    {pub.tags.map((t) => <span class="chip">{t}</span>)}
+  </div>
+</article>

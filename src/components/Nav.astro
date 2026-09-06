@@ -1,0 +1,130 @@
+---
+import { nav, site, href } from '../data/site';
+interface Props { scrollNav?: boolean }
+const { scrollNav = false } = Astro.props;
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (h: string) => path === href(h).replace(/\/+$/, '');
+---
+<header
+  id="site-header"
+  data-scroll-nav={scrollNav ? 'true' : 'false'}
+  data-state="open"
+  class="sticky top-0 z-30 border-b border-line bg-bg/92 backdrop-blur-sm"
+>
+  <div class="mx-auto flex max-w-[1140px] items-baseline gap-5 px-7 py-3">
+    <a href={href('/')} class="font-display text-[17px] font-semibold tracking-[-0.01em] no-underline">
+      {site.name}
+    </a>
+    <span class="mono-label hidden sm:inline">{site.role}</span>
+    <div class="ml-auto flex items-center gap-4">
+      <a class="mono-label no-underline hover:text-accent" href={site.links.github} rel="me noopener" target="_blank">GitHub</a>
+      <a class="mono-label no-underline hover:text-accent" href={`mailto:${site.email}`}>Email</a>
+      <button
+        id="theme-toggle"
+        type="button"
+        aria-label="Switch colour theme"
+        class="rounded border border-line px-2 py-[3px] font-mono text-[11px] text-muted transition-colors hover:border-accent hover:text-accent"
+      >
+        <span data-theme-label>Theme</span>
+      </button>
+    </div>
+  </div>
+
+  {/* The four detail pages. Collapses while scrolling down, returns when the
+      scroll stops, when scrolling up, or at the top of the document. */}
+  <div id="nav-panel" class="grid grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out">
+    <div class="overflow-hidden">
+      <nav
+        aria-label="Sections"
+        class="mx-auto grid max-w-[1140px] grid-cols-2 gap-px border-t border-line bg-line px-0 md:grid-cols-4"
+      >
+        {
+          nav.map((item) => (
+            <a
+              href={href(item.href)}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              class:list={[
+                'group flex flex-col gap-1 bg-bg px-7 py-3 no-underline transition-colors hover:bg-surface md:px-5',
+                isActive(item.href) && 'bg-surface',
+              ]}
+            >
+              <span
+                class:list={[
+                  'font-display text-[15.5px] font-semibold',
+                  isActive(item.href) ? 'text-accent' : 'text-ink group-hover:text-accent',
+                ]}
+              >
+                {item.label}
+              </span>
+              <span class="font-mono text-[10.5px] leading-snug text-muted">{item.blurb}</span>
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  const panel = document.getElementById('nav-panel');
+
+  if (header && panel && header.dataset.scrollNav === 'true') {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let last = window.scrollY;
+    let idle: number | undefined;
+
+    const open = () => {
+      panel.classList.remove('grid-rows-[0fr]');
+      panel.classList.add('grid-rows-[1fr]');
+      header.dataset.state = 'open';
+    };
+    const collapse = () => {
+      panel.classList.remove('grid-rows-[1fr]');
+      panel.classList.add('grid-rows-[0fr]');
+      header.dataset.state = 'peek';
+    };
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      // Near the top, or heading back up: the section list belongs on screen.
+      if (y < 80 || y < last - 4) open();
+      else if (y > last + 4 && y > 140) collapse();
+      last = y;
+
+      // Stopped scrolling — bring it back so the next move is always one click away.
+      window.clearTimeout(idle);
+      idle = window.setTimeout(open, reduce ? 0 : 260);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // Theme toggle: cycles system → light → dark → system.
+  const toggle = document.getElementById('theme-toggle');
+  const label = document.querySelector('[data-theme-label]');
+  const readTheme = () => {
+    try {
+      return localStorage.getItem('theme') ?? 'system';
+    } catch {
+      return 'system';
+    }
+  };
+  const paint = (mode: string) => {
+    if (label) label.textContent = mode === 'system' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light';
+  };
+  paint(readTheme());
+  toggle?.addEventListener('click', () => {
+    const order = ['system', 'light', 'dark'];
+    const next = order[(order.indexOf(readTheme()) + 1) % order.length]!;
+    if (next === 'system') {
+      document.documentElement.removeAttribute('data-theme');
+      try { localStorage.removeItem('theme'); } catch {}
+    } else {
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch {}
+    }
+    paint(next);
+  });
+</script>

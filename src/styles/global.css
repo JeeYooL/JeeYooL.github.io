@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   Design tokens
+   Light palette on bare :root; dark redefines the same names in two places
+   so that OS preference and the explicit toggle both win in both directions.
+   Components only ever read the tokens, never a raw hex.
+   ========================================================================= */
+:root {
+  --c-bg:          #ECEEED;  /* cool neutral ground, faint green bias   */
+  --c-surface:     #F7F8F7;  /* chips, insets                           */
+  --c-raised:      #FFFFFF;
+  --c-ink:         #141A19;  /* body text                               */
+  --c-ink-2:       #3B4644;  /* secondary prose                         */
+  --c-muted:       #6D7A77;  /* captions, mono labels                   */
+  --c-line:        #D3D9D7;  /* hairline rules                          */
+  --c-line-strong: #B9C2BF;
+  --c-accent:      #0E5B54;  /* petrol — links, computational thread    */
+  --c-accent-deep: #0A4640;
+  --c-accent-wash: rgba(14, 91, 84, 0.09);
+  --c-signal:      #8E4E1D;  /* copper — data annotations + space/hardware */
+  --c-signal-wash: rgba(142, 78, 29, 0.10);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c-bg:          #0F1413;
+    --c-surface:     #151B1A;
+    --c-raised:      #1B2221;
+    --c-ink:         #E9EEEC;
+    --c-ink-2:       #BAC5C2;
+    --c-muted:       #8B9995;
+    --c-line:        #28312F;
+    --c-line-strong: #3A4543;
+    --c-accent:      #63D2C3;
+    --c-accent-deep: #8FE4D8;
+    --c-accent-wash: rgba(99, 210, 195, 0.12);
+    --c-signal:      #DB9F6C;
+    --c-signal-wash: rgba(219, 159, 108, 0.13);
+  }
+}
+
+:root[data-theme="dark"] {
+  --c-bg:          #0F1413;
+  --c-surface:     #151B1A;
+  --c-raised:      #1B2221;
+  --c-ink:         #E9EEEC;
+  --c-ink-2:       #BAC5C2;
+  --c-muted:       #8B9995;
+  --c-line:        #28312F;
+  --c-line-strong: #3A4543;
+  --c-accent:      #63D2C3;
+  --c-accent-deep: #8FE4D8;
+  --c-accent-wash: rgba(99, 210, 195, 0.12);
+  --c-signal:      #DB9F6C;
+  --c-signal-wash: rgba(219, 159, 108, 0.13);
+}
+
+/* Expose the tokens to Tailwind as utility-generating theme values.
+   `inline` keeps the var() reference live, so utilities follow the theme. */
+@theme inline {
+  --color-bg:          var(--c-bg);
+  --color-surface:     var(--c-surface);
+  --color-raised:      var(--c-raised);
+  --color-ink:         var(--c-ink);
+  --color-ink-2:       var(--c-ink-2);
+  --color-muted:       var(--c-muted);
+  --color-line:        var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-accent:      var(--c-accent);
+  --color-accent-deep: var(--c-accent-deep);
+  --color-accent-wash: var(--c-accent-wash);
+  --color-signal:      var(--c-signal);
+  --color-signal-wash: var(--c-signal-wash);
+
+  --font-display: Spectral, Georgia, "Times New Roman", serif;
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    color-scheme: light dark;
+  }
+  body {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    font-size: 15.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.18;
+    text-wrap: balance;
+  }
+  a { color: inherit; }
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  ::selection { background: var(--c-accent-wash); }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Prose link — the only underlined thing on the site. */
+  .link {
+    color: var(--c-accent);
+    border-bottom: 1px solid color-mix(in srgb, var(--c-accent) 35%, transparent);
+    text-decoration: none;
+    transition: color 120ms ease, border-color 120ms ease;
+  }
+  .link:hover { color: var(--c-accent-deep); border-bottom-color: var(--c-accent-deep); }
+
+  /* Mono label used for eyebrows, dates, venues, units. */
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--c-muted);
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    border-radius: 3px;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+
+  /* Two-column band: margin label on the left, content on the right. */
+  .band {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 34px;
+    padding: 44px 0;
+    border-top: 1px solid var(--c-line);
+  }
+  @media (max-width: 900px) {
+    .band { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 34px 0; }
+  }
+
+  /* Hero degradation trace */
+  @keyframes traceReveal { from { stroke-dashoffset: var(--trace-len); } to { stroke-dashoffset: 0; } }
+  @keyframes traceFade { from { opacity: 0; } to { opacity: 1; } }
+  .trace {
+    stroke-dasharray: var(--trace-len);
+    animation: traceReveal 1900ms cubic-bezier(0.22, 0.8, 0.3, 1) both;
+  }
+  .trace-late { animation: traceFade 500ms ease-out 1500ms both; }
+  @media (prefers-reduced-motion: reduce) {
+    .trace { stroke-dasharray: none; stroke-dashoffset: 0; animation: none; }
+    .trace-late { animation: none; opacity: 1; }
+  }
+}

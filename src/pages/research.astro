@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import LoopDiagram from '../components/LoopDiagram.astro';
+import { href } from '../data/site';
+
+const thrusts = (await getCollection('thrusts')).sort((a, b) => a.data.order - b.data.order);
+const projects = await getCollection('projects');
+const projectTitle = (id: string) => projects.find((p) => p.id === id)?.data.title ?? id;
+---
+<Base title="Research" description="Three research thrusts: reliability in space environments, data-driven stability design, and measurement automation.">
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
+    <header class="flex flex-col gap-4 pt-14 pb-10">
+      <span class="mono-label">Research</span>
+      <h1 class="max-w-[22ch] text-[clamp(32px,4.6vw,44px)] tracking-[-0.02em]">
+        Three thrusts, one loop
+      </h1>
+      <p class="max-w-[74ch] text-[17px] text-ink-2">
+        The work splits into three lines that are usually held by three different people. They are
+        listed in order because they run in order: an environment sets the failure mode, a model
+        predicts the lifetime, and an instrument decides whether the prediction was right.
+      </p>
+    </header>
+
+    {thrusts.map((t, i) => (
+      <section class="band">
+        <div class="flex flex-col gap-1.5">
+          <span class="font-mono text-[11px] tracking-[0.13em] text-muted tabular-nums">THRUST {i + 1}</span>
+          <h2 class:list={['text-[21px]', t.data.accent === 'signal' ? 'text-signal' : 'text-accent']}>
+            {t.data.title}
+          </h2>
+        </div>
+        <div class="flex flex-col gap-5">
+          <p class="max-w-[74ch] text-[16.5px] text-ink-2">{t.body?.trim()}</p>
+          <div class="flex flex-wrap gap-2">
+            {t.data.keywords.map((k) => <span class="chip">{k}</span>)}
+          </div>
+          {t.data.projects.length > 0 && (
+            <div class="flex flex-col gap-1 border-t border-line pt-4">
+              <span class="mono-label">Where it is built</span>
+              <ul class="flex flex-col gap-1 pt-1">
+                {t.data.projects.map((id) => (
+                  <li><a class="link text-[15px]" href={href(`/projects/${id}/`)}>{projectTitle(id)}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+    ))}
+
+    <section class="band">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">The loop</span>
+        <h2 class="text-[21px]">How the three close</h2>
+        <p class="max-w-[24ch] text-[13px] text-muted">
+          Numbered because the stages genuinely run in this order.
+        </p>
+      </div>
+      <LoopDiagram />
+    </section>
+  </div>
+</Base>

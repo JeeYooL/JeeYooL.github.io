@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { href } from '../../data/site';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="Projects" description="Five builds — measurement hardware, a self-driving lab architecture, ML screening pipelines and lab tooling.">
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
+    <header class="flex flex-col gap-4 pt-14 pb-10">
+      <span class="mono-label">Projects</span>
+      <h1 class="max-w-[22ch] text-[clamp(32px,4.6vw,44px)] tracking-[-0.02em]">Five builds</h1>
+      <p class="max-w-[74ch] text-[17px] text-ink-2">
+        Each page follows the same four blocks — problem, approach, result, links — so they can be
+        compared rather than admired. Where a result number is not measured yet, it says so.
+      </p>
+    </header>
+
+    <ul class="flex flex-col">
+      {projects.map((p) => (
+        <li class="border-t border-line">
+          <a href={href(`/projects/${p.id}/`)} class="group grid gap-4 py-8 no-underline md:grid-cols-[minmax(0,1fr)_260px] md:gap-10">
+            <div class="flex flex-col gap-2.5">
+              <h2 class:list={['text-[24px] transition-colors', p.data.accent === 'signal' ? 'group-hover:text-signal' : 'group-hover:text-accent']}>
+                {p.data.title}
+              </h2>
+              <p class="max-w-[70ch] text-[15.5px] text-ink-2">{p.data.oneLiner}</p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                {p.data.tags.map((t) => <span class="chip">{t}</span>)}
+              </div>
+            </div>
+            {p.data.status && (
+              <div class="flex flex-col gap-1 border-line md:border-l md:pl-6">
+                <span class="mono-label">Status</span>
+                <span class="text-[13.5px] text-muted">{p.data.status}</span>
+              </div>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>
