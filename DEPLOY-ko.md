@@ -41,12 +41,25 @@ Node 20 이상이면 됩니다. `npm run build`로 `dist/`가 만들어집니다
 
 | 고칠 것 | 파일 |
 | --- | --- |
-| 논문 추가·수정 | `src/content/publications/*.md` |
-| 프로젝트 본문 | `src/content/projects/*.md` (Problem / Approach / Result / Links 4블록 고정) |
-| 연구 3축 | `src/content/thrusts/*.md` |
-| 이름·이메일·링크·네비 | `src/data/site.ts` |
-| Home의 Highlights / Recent | `src/pages/index.astro` 상단 |
+| **모든 UI 문구·제목·Highlights·Recent·CV 내용** | `src/i18n/ui.ts` (한국어·영어 한 파일) |
+| 논문 추가·수정 | `src/content/publications/*.md` — 논문 1편당 1파일. 서지정보는 언어 공통이고 `contribution`(영문)·`contributionKo`(국문) 두 줄만 언어별 |
+| 프로젝트 본문 | `src/content/projects/ko/*.md`, `src/content/projects/en/*.md` (파일명이 같아야 언어 전환 시 같은 페이지로 갑니다) |
+| 연구 3축 | `src/content/thrusts/ko/*.md`, `src/content/thrusts/en/*.md` |
+| 이메일·GitHub·특허번호·최종수정일 | `src/data/site.ts` |
 | 색·폰트 | `src/styles/global.css` |
+
+### 언어 구조
+
+한국어가 기본이라 루트(`/`, `/research/`, …)에서 바로 나오고, 영어는 `/en/`
+아래에 있습니다. 헤더 오른쪽의 `EN` / `한국어` 버튼을 누르면 **보고 있던 페이지
+그대로** 반대 언어로 넘어갑니다.
+
+실제 페이지 코드는 `src/views/*.astro` 하나씩이고, `src/pages/` 밑의 파일들은
+언어만 지정하는 두 줄짜리 껍데기입니다. 페이지를 추가하려면 view 하나와
+껍데기 둘을 만들면 됩니다.
+
+논문 제목·저자·저널명은 **번역하지 않습니다.** 원문 서지정보 그대로 두는 것이
+맞고, 한국어 페이지에서도 영문으로 표기됩니다.
 
 frontmatter는 `src/content/config.ts`에서 스키마 검증을 하므로, 오타가 있으면
 빈 칸으로 렌더링되지 않고 빌드가 실패합니다.

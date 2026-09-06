@@ -1,0 +1,97 @@
+---
+import Base from '../layouts/Base.astro';
+import { t, type Lang } from '../i18n/ui';
+import { site } from '../data/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+---
+<Base lang={lang} title={s.cv.title} description={s.cv.description}>
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
+    <header class="flex flex-col gap-4 pt-14 pb-4">
+      <span class="mono-label">{s.cv.label}</span>
+      <h1 class="max-w-[24ch] text-[clamp(30px,4.6vw,44px)] tracking-[-0.02em]">
+        {s.name}
+        {lang === 'ko' && <span class="ml-3 font-mono text-[16px] font-normal align-middle text-muted">{s.nameLatin}</span>}
+      </h1>
+      <p class="max-w-[60ch] text-[17px] text-ink-2">{s.cv.lede}</p>
+      <div class="flex flex-wrap gap-2 pt-1">
+        <a class="chip px-3 py-1.5 text-[12.5px] no-underline hover:border-accent hover:text-accent" href={`mailto:${site.email}`}>{site.email}</a>
+        <a class="chip px-3 py-1.5 text-[12.5px] no-underline hover:border-accent hover:text-accent" href={site.links.github} rel="noopener" target="_blank">GitHub</a>
+        {site.links.orcid && <a class="chip px-3 py-1.5 text-[12.5px] no-underline hover:border-accent hover:text-accent" href={site.links.orcid} rel="noopener" target="_blank">ORCID</a>}
+        {site.links.cvPdf
+          ? <a class="chip px-3 py-1.5 text-[12.5px] no-underline hover:border-accent hover:text-accent" href={site.links.cvPdf}>{s.cv.downloadPdf}</a>
+          : <span class="chip px-3 py-1.5 text-[12.5px] opacity-60">{s.cv.pdfPending}</span>}
+      </div>
+    </header>
+
+    <section class="band">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.cv.experienceLabel}</span>
+        <h2 class="text-[21px]">{s.cv.experienceTitle}</h2>
+      </div>
+      <div class="flex flex-col">
+        {s.cv.positions.map((p, i) => (
+          <div class="grid gap-2 border-t border-line py-5 first:border-t-0 first:pt-0 sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-8">
+            <span class:list={['font-mono text-[12.5px] tabular-nums', i === 0 ? 'text-accent' : 'text-muted']}>{p.when}</span>
+            <div class="flex flex-col gap-1">
+              <h3 class="text-[18px]">{p.role}</h3>
+              <p class="text-[14px] text-muted">{p.where}</p>
+              <p class="max-w-[66ch] pt-1 text-[15px] text-ink-2">{p.what}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.cv.educationLabel}</span>
+        <h2 class="text-[21px]">{s.cv.educationTitle}</h2>
+      </div>
+      <div class="flex flex-col">
+        {s.cv.education.map((e) => (
+          <div class="grid gap-2 border-t border-line py-5 first:border-t-0 first:pt-0 sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-8">
+            <span class="font-mono text-[12.5px] tabular-nums text-muted">{e.when}</span>
+            <div class="flex flex-col gap-1">
+              <h3 class="text-[18px]">{e.what}</h3>
+              <p class="text-[14px] text-muted">{e.where}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.cv.patentLabel}</span>
+        <h2 class="text-[21px]">{s.cv.patentTitle}</h2>
+      </div>
+      <div class="flex flex-col gap-2">
+        <h3 class="max-w-[70ch] text-[18px]">{s.publications.patentTitle}</h3>
+        <p class="font-mono text-[13px] text-muted">
+          <span class="text-signal">{site.patentNumber}</span> · {s.publications.patentMeta}
+        </p>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.cv.toolLabel}</span>
+        <h2 class="text-[21px]">{s.cv.toolTitle}</h2>
+        <p class="max-w-[24ch] text-[13px] text-muted">{s.cv.toolNote}</p>
+      </div>
+      <div class="grid gap-8 md:grid-cols-3">
+        {s.cv.toolstack.map((c) => (
+          <div class="flex flex-col gap-3">
+            <h3 class="mono-label border-b border-line-strong pb-2">{c.group}</h3>
+            <ul class="flex flex-col gap-2">
+              {c.items.map((i) => <li class="text-[13.5px] leading-snug text-ink-2">{i}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

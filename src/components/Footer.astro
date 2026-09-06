@@ -1,21 +1,31 @@
 ---
-import { site, href, nav } from '../data/site';
+import { t, type Lang } from '../i18n/ui';
+import { localePath } from '../i18n/utils';
+import { site, navPaths } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
 ---
 <footer class="border-t border-line-strong bg-surface">
   <div class="mx-auto flex max-w-[1140px] flex-wrap items-start justify-between gap-8 px-7 py-10">
     <div class="flex flex-col gap-1">
-      <span class="font-display text-[16px] font-semibold">{site.name}</span>
-      <span class="text-[13px] text-muted">{site.affiliationPlain}</span>
-      <span class="text-[13px] text-muted">{site.location}</span>
+      <span class="font-display text-[16px] font-semibold">{s.name}</span>
+      {lang === 'ko' && <span class="font-mono text-[12px] text-muted">{s.nameLatin}</span>}
+      <span class="text-[13px] text-muted">{s.affiliationPlain}</span>
+      <span class="text-[13px] text-muted">{s.location}</span>
       <a class="link mt-1 w-fit font-mono text-[12.5px]" href={`mailto:${site.email}`}>{site.email}</a>
     </div>
-    <nav class="flex flex-col gap-1" aria-label="Footer">
-      {nav.map((i) => <a class="text-[13px] text-ink-2 no-underline hover:text-accent" href={href(i.href)}>{i.label}</a>)}
+    <nav class="flex flex-col gap-1" aria-label={s.a11y.footerNav}>
+      {navPaths.map((n) => (
+        <a class="text-[13px] text-ink-2 no-underline hover:text-accent" href={localePath(n.path, lang)}>
+          {s.nav[n.key as keyof typeof s.nav].label}
+        </a>
+      ))}
     </nav>
     <div class="flex flex-col gap-1 font-mono text-[11.5px] text-muted">
-      <a class="no-underline hover:text-accent" href={site.links.github} rel="me noopener" target="_blank">github.com/JeeYooL</a>
-      <a class="no-underline hover:text-accent" href={site.repo} rel="noopener" target="_blank">Site repository</a>
-      <span>Last updated {site.lastUpdated}</span>
+      <a class="no-underline hover:text-accent" href={site.links.github} rel="me noopener" target="_blank">{site.links.githubLabel}</a>
+      <a class="no-underline hover:text-accent" href={site.repo} rel="noopener" target="_blank">{s.common.siteRepo}</a>
+      <span>{s.common.lastUpdated} {site.lastUpdated}</span>
     </div>
   </div>
 </footer>

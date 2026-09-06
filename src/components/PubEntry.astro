@@ -1,16 +1,22 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { t, type Lang } from '../i18n/ui';
+
 interface Props {
   pub: CollectionEntry<'publications'>['data'];
+  lang: Lang;
   /** Featured cards carry the contribution paragraph; the full list stays as
    *  a citation line so the three featured papers are not repeated at length. */
   variant?: 'featured' | 'list';
 }
-const { pub, variant = 'list' } = Astro.props;
+const { pub, lang, variant = 'list' } = Astro.props;
+const s = t(lang);
 const featured = variant === 'featured';
 const doiUrl = pub.doi ? `https://doi.org/${pub.doi}` : undefined;
+// Bibliographic data is never translated — only the contribution summary is.
+const contribution = lang === 'ko' ? pub.contributionKo : pub.contribution;
 
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 // Built as one string so commas never wrap onto a line of their own.
 const authorHtml = pub.authors
   .map((a, i) => (i === pub.selfIndex ? `<b class="font-semibold text-ink">${esc(a)}</b>` : esc(a)))
@@ -25,23 +31,23 @@ const authorHtml = pub.authors
     <span class="font-mono text-[12px] italic text-ink-2">{pub.venue}</span>
     {pub.volume && <span class="font-mono text-[12px] tabular-nums text-muted">{pub.volume}, {pub.pages}</span>}
     {pub.role && (
-      <span class="rounded-[3px] bg-accent-wash px-2 py-[2px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-accent">Co-first</span>
+      <span class="rounded-[3px] bg-accent-wash px-2 py-[2px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-accent">{s.publications.coFirst}</span>
     )}
     {pub.openAccess && (
-      <span class="rounded-[3px] bg-signal-wash px-2 py-[2px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-signal">Open access</span>
+      <span class="rounded-[3px] bg-signal-wash px-2 py-[2px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-signal">{s.publications.openAccess}</span>
     )}
   </div>
 
-  <h3 class:list={['max-w-[74ch] font-display font-semibold', featured ? 'text-[21px]' : 'text-[17px]']}>
+  <h3 class:list={['max-w-[74ch] font-display font-semibold', featured ? 'text-[21px]' : 'text-[17px]']} lang="en">
     {doiUrl ? <a class="link" href={doiUrl} rel="noopener" target="_blank">{pub.title}</a> : pub.title}
   </h3>
 
-  <p class="max-w-[78ch] text-[13px] leading-relaxed text-muted" set:html={authorHtml} />
+  <p class="max-w-[78ch] text-[13px] leading-relaxed text-muted" lang="en" set:html={authorHtml} />
 
-  {featured && <p class="max-w-[74ch] pt-1 text-[15px] text-ink-2">{pub.contribution}</p>}
+  {featured && <p class="max-w-[74ch] pt-1 text-[15px] text-ink-2">{contribution}</p>}
 
   <div class="flex flex-wrap items-center gap-2 pt-1">
-    {doiUrl && <a class="chip no-underline hover:border-accent hover:text-accent" href={doiUrl} rel="noopener" target="_blank">DOI</a>}
-    {pub.tags.map((t) => <span class="chip">{t}</span>)}
+    {doiUrl && <a class="chip no-underline hover:border-accent hover:text-accent" href={doiUrl} rel="noopener" target="_blank">{s.common.doi}</a>}
+    {pub.tags.map((tag) => <span class="chip">{s.tagLabels[tag as keyof typeof s.tagLabels] ?? tag}</span>)}
   </div>
 </article>

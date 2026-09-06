@@ -1,24 +1,18 @@
 ---
-/** The four stages, as a closed loop. Lines and text only — no icons. */
-const stages = [
-  { n: '1', label: 'Design', note: 'descriptors, ΔG_mix, MOBO proposal' },
-  { n: '2', label: 'Predict', note: 'degradation model, T80 estimate' },
-  { n: '3', label: 'Measure', note: 'MPPT, J–V, EIS, operando jig' },
-  { n: '4', label: 'Retrain', note: 'measured lifetime back into the model' },
-];
+import { t, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
 ---
 <div class="flex flex-col gap-4">
   <ol class="grid grid-cols-1 gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
-    {stages.map((s) => (
+    {s.research.stages.map((stage, i) => (
       <li class="flex flex-col gap-1.5 bg-bg p-5">
-        <span class="font-mono text-[11px] tracking-[0.13em] text-accent">STAGE {s.n}</span>
-        <span class="font-display text-[19px] font-semibold">{s.label}</span>
-        <span class="text-[13px] leading-snug text-muted">{s.note}</span>
+        <span class="font-mono text-[11px] tracking-[0.13em] text-accent">{s.research.stageWord} {i + 1}</span>
+        <span class="font-display text-[19px] font-semibold">{stage.label}</span>
+        <span class="text-[13px] leading-snug text-muted">{stage.note}</span>
       </li>
     ))}
   </ol>
-  <p class="font-mono text-[11px] text-muted">
-    Stage 4 feeds stage 1. The loop is the point — a prediction that never meets a measurement
-    is a hypothesis, and a measurement that never updates a model is a data point.
-  </p>
+  <p class="font-mono text-[11px] leading-relaxed text-muted">{s.research.loopCaption}</p>
 </div>

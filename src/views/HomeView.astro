@@ -1,0 +1,181 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import DegradationTrace from '../components/DegradationTrace.astro';
+import { t, type Lang } from '../i18n/ui';
+import { localePath, splitId } from '../i18n/utils';
+import { site } from '../data/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+
+const thrusts = (await getCollection('thrusts'))
+  .filter((e) => splitId(e.id).lang === lang)
+  .sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection('projects'))
+  .filter((e) => splitId(e.id).lang === lang)
+  .sort((a, b) => a.data.order - b.data.order);
+const featured = (await getCollection('publications'))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+<Base lang={lang} title={s.home.title} description={s.home.description} scrollNav={true}>
+  <div id="scroll-progress" class="fixed left-0 top-0 z-40 h-[2px] w-0 bg-accent" aria-hidden="true"></div>
+
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
+    <!-- Hero: the degradation curve is the structure, not decoration -->
+    <section class="grid gap-10 pt-14 pb-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-end">
+      <div class="flex flex-col gap-5">
+        <h1 class="max-w-[20ch] text-[clamp(32px,5vw,46px)] tracking-[-0.025em]">{s.tagline}</h1>
+        <p class="max-w-[52ch] text-[17px] text-ink-2">{s.intro}</p>
+        <div class="flex flex-wrap gap-2 pt-1">
+          <a
+            href={localePath('/projects/', lang)}
+            class="rounded-[4px] bg-accent px-4 py-2 text-[14px] font-medium text-bg no-underline transition-colors hover:bg-accent-deep"
+            >{s.common.seeProjects}</a
+          >
+          {site.links.cvPdf ? (
+            <a href={site.links.cvPdf} class="chip px-4 py-2 text-[13px] no-underline hover:border-accent hover:text-accent">{s.common.resumePdf}</a>
+          ) : (
+            <span class="chip cursor-not-allowed px-4 py-2 text-[13px] opacity-60" title={s.common.resumePdfTitle}>{s.common.resumePending}</span>
+          )}
+        </div>
+      </div>
+      <DegradationTrace lang={lang} />
+    </section>
+
+    <!-- Highlights: text blocks, not cards -->
+    <section class="band" id="highlights">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.home.highlightsLabel}</span>
+        <h2 class="text-[21px]">{s.home.highlightsTitle}</h2>
+      </div>
+      <div class="flex flex-col gap-7">
+        {s.home.highlights.map((h) => (
+          <div class="flex max-w-[74ch] flex-col gap-1">
+            <p class="font-display text-[20px] font-semibold">{h.lead}</p>
+            <p class="text-[15.5px] text-ink-2" set:html={h.body} />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Research thrusts -->
+    <section class="band" id="research">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.home.researchLabel}</span>
+        <h2 class="text-[21px]">{s.home.researchTitle}</h2>
+        <a class="link mt-1 w-fit text-[13px]" href={localePath('/research/', lang)}>{s.common.fullResearch}</a>
+      </div>
+      <div class="flex flex-col gap-8">
+        {thrusts.map((thrust, i) => (
+          <div class="flex flex-col gap-2">
+            <span class="font-mono text-[11px] tracking-[0.13em] text-muted tabular-nums">
+              {lang === 'ko' ? `${s.home.ordinals[i]} ${s.home.thrustWord}` : `${s.home.thrustWord} ${i + 1}`}
+            </span>
+            <h3 class="text-[19px]">{thrust.data.title}</h3>
+            <p class="max-w-[74ch] text-[15px] text-ink-2">{thrust.body?.trim()}</p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              {thrust.data.keywords.map((k) => <span class="chip">{k}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="band" id="projects">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.home.projectsLabel}</span>
+        <h2 class="text-[21px]">{s.home.projectsTitle}</h2>
+        <a class="link mt-1 w-fit text-[13px]" href={localePath('/projects/', lang)}>{s.common.allProjects}</a>
+      </div>
+      <ul class="flex flex-col">
+        {projects.map((p) => (
+          <li class="border-t border-line first:border-t-0 first:pt-0">
+            <a
+              href={localePath(`/projects/${splitId(p.id).slug}/`, lang)}
+              class="group grid gap-2 py-5 no-underline sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline sm:gap-8"
+            >
+              <div class="flex flex-col gap-1.5">
+                <h3 class:list={['text-[19px] transition-colors', p.data.accent === 'signal' ? 'group-hover:text-signal' : 'group-hover:text-accent']}>
+                  {p.data.title}
+                </h3>
+                <p class="max-w-[70ch] text-[14.5px] text-ink-2">{p.data.oneLiner}</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                {p.data.tags.map((tag) => <span class="chip">{tag}</span>)}
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Selected publications -->
+    <section class="band" id="publications">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.home.publicationsLabel}</span>
+        <h2 class="text-[21px]">{s.home.publicationsTitle}</h2>
+        <a class="link mt-1 w-fit text-[13px]" href={localePath('/publications/', lang)}>{s.common.allPapers}</a>
+      </div>
+      <ul class="flex flex-col">
+        {featured.map((p) => (
+          <li class="flex flex-col gap-2 border-t border-line py-5 first:border-t-0 first:pt-0">
+            <div class="flex flex-wrap items-baseline gap-x-3">
+              <span class="font-mono text-[12px] tabular-nums text-muted">{p.data.year}</span>
+              <span class="font-mono text-[12px] italic text-ink-2">{p.data.venue}</span>
+            </div>
+            <h3 class="max-w-[70ch] text-[18px]" lang="en">
+              <a class="link" href={`https://doi.org/${p.data.doi}`} rel="noopener" target="_blank">{p.data.title}</a>
+            </h3>
+            <p class="max-w-[74ch] text-[14.5px] text-ink-2">
+              {lang === 'ko' ? p.data.contributionKo : p.data.contribution}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Recent -->
+    <section class="band" id="recent">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.home.recentLabel}</span>
+        <h2 class="text-[21px]">{s.home.recentTitle}</h2>
+      </div>
+      <ul class="flex flex-col">
+        {s.home.recent.map((r) => (
+          <li class="grid gap-2 border-t border-line py-4 first:border-t-0 first:pt-0 sm:grid-cols-[120px_minmax(0,1fr)] sm:gap-6">
+            <span class="font-mono text-[12px] tabular-nums text-muted">{r.when}</span>
+            <p class="max-w-[70ch] text-[15px] text-ink-2" set:html={r.what} />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="flex flex-wrap items-baseline justify-between gap-6 border-t border-line-strong pt-10">
+      <p class="max-w-[46ch] font-display text-[21px]">{s.home.closing}</p>
+      <a
+        href={localePath('/projects/', lang)}
+        class="rounded-[4px] bg-accent px-4 py-2 text-[14px] font-medium text-bg no-underline transition-colors hover:bg-accent-deep"
+        >{s.common.seeProjects}</a
+      >
+    </section>
+  </div>
+</Base>
+
+<script>
+  // Reading position. The only scroll effect on the page — there are no
+  // scroll-triggered entrance animations by design.
+  const bar = document.getElementById('scroll-progress');
+  if (bar) {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = max > 0 ? `${Math.min(100, (window.scrollY / max) * 100)}%` : '0%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

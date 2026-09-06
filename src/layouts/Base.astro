@@ -2,66 +2,71 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import { site } from '../data/site';
+import { t, htmlLang, LOCALES, type Lang } from '../i18n/ui';
+import { localePath, canonicalPath } from '../i18n/utils';
 
 interface Props {
+  lang: Lang;
   title: string;
   description?: string;
   /** Home uses the scroll-reactive nav; inner pages keep it always open. */
   scrollNav?: boolean;
 }
-const {
-  title,
-  description = `${site.name} — ${site.tagline} ${site.intro}`,
-  scrollNav = false,
-} = Astro.props;
+const { lang, title, description, scrollNav = false } = Astro.props;
+const s = t(lang);
 
-const pageTitle = title === site.name ? site.name : `${title} — ${site.name}`;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com').href;
+const pageTitle = title === s.name ? s.name : `${title} — ${s.name}`;
+const desc = description ?? `${s.name} — ${s.tagline} ${s.intro}`;
+const origin = Astro.site ?? new URL('https://jeeyool.github.io');
+const canonical = new URL(Astro.url.pathname, origin).href;
+const here = canonicalPath(Astro.url);
 ---
 <!doctype html>
-<html lang="en">
+<html lang={htmlLang[lang]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={desc} />
     <link rel="canonical" href={canonical} />
+    {LOCALES.map((l) => (
+      <link rel="alternate" hreflang={htmlLang[l]} href={new URL(localePath(here, l), origin).href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={new URL(localePath(here, 'ko'), origin).href} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={desc} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=Noto+Serif+KR:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
 
     {/* Applies the stored theme before first paint so the page never flashes. */}
     <script is:inline>
       (function () {
         try {
-          var t = localStorage.getItem('theme');
-          if (t === 'dark' || t === 'light') {
-            document.documentElement.setAttribute('data-theme', t);
-          }
+          var v = localStorage.getItem('theme');
+          if (v === 'dark' || v === 'light') document.documentElement.setAttribute('data-theme', v);
         } catch (e) {}
       })();
     </script>
   </head>
-  <body class="bg-bg text-ink">
+  <body class="bg-bg text-ink" data-lang={lang}>
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-raised focus:px-4 focus:py-2 focus:text-accent"
-      >Skip to content</a
+      >{s.a11y.skip}</a
     >
-    <Nav scrollNav={scrollNav} />
+    <Nav lang={lang} scrollNav={scrollNav} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>

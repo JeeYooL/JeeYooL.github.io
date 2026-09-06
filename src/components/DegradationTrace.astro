@@ -13,8 +13,10 @@
  * caption below — it currently declares the trace synthetic, which it must
  * while this model is what draws it.
  */
-interface Props { compact?: boolean }
-const { compact = false } = Astro.props;
+import { t, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; compact?: boolean }
+const { lang, compact = false } = Astro.props;
+const s = t(lang);
 
 const T_MAX = 2000;
 const X0 = 70, X1 = 980, Y_TOP = 40; // y=40 is PCE 1.00; 1000 SVG units per 1.0 PCE
@@ -53,7 +55,7 @@ const xTicks = [0, 500, 1000, 1500, 2000];
     viewBox="0 0 1000 300"
     class="w-full"
     role="img"
-    aria-label={`Modelled degradation trace: normalized power conversion efficiency falling from 1.00 to about ${model(T_MAX).toFixed(2)} over ${T_MAX} hours of continuous maximum-power-point tracking, crossing 0.80 at roughly ${Math.round(t80)} hours.`}
+    aria-label={`${s.home.figureAxisY} 1.00 \u2192 ${model(T_MAX).toFixed(2)} / ${T_MAX} h (T80 \u2248 ${Math.round(t80)} h)`}
   >
     <!-- horizontal gridlines, one per labelled value -->
     {yTicks.map((v) => (
@@ -72,10 +74,10 @@ const xTicks = [0, 500, 1000, 1500, 2000];
     <line x1={X0} y1="248" x2={X1} y2="248" stroke="var(--c-line-strong)" stroke-width="1" />
 
     <text x={X0 - 12} y="20" text-anchor="start" font-family="var(--font-mono)" font-size="12" fill="var(--c-muted)">
-      Normalized PCE
+      {s.home.figureAxisY}
     </text>
     <text x={X1} y="294" text-anchor="end" font-family="var(--font-mono)" font-size="12" fill="var(--c-muted)">
-      Time under continuous MPPT (h)
+      {s.home.figureAxisX}
     </text>
 
     <!-- T80 annotation: the one place the signal colour is allowed -->
@@ -99,10 +101,6 @@ const xTicks = [0, 500, 1000, 1500, 2000];
     />
   </svg>
   {!compact && (
-    <figcaption class="font-mono text-[11px] leading-relaxed text-muted">
-      Synthetic trace from a three-exponential degradation model — burn-in, light-soaking
-      recovery, and two decay terms. Not measured data; it stands in until a measured MPPT
-      run replaces it.
-    </figcaption>
+    <figcaption class="font-mono text-[11px] leading-relaxed text-muted">{s.home.figureCaption}</figcaption>
   )}
 </figure>

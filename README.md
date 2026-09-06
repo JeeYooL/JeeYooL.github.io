@@ -23,6 +23,32 @@ Moving to a project repo instead (`<username>.github.io/portfolio`)? Add
 `base: '/portfolio'` to `astro.config.mjs`. Every internal link already goes
 through the `href()` helper in `src/data/site.ts`, so nothing else changes.
 
+## Languages
+
+Korean is the default and is served from the site root; English lives under
+`/en/`. The header carries a switcher that stays on the same page across the
+switch, and every page emits `hreflang` alternates.
+
+```
+/            /research/            /projects/            /publications/  /cv/     ← 한국어
+/en/         /en/research/         /en/projects/         /en/publications/ /en/cv/ ← English
+```
+
+- **`src/i18n/ui.ts`** holds every string that reads as prose, in both
+  languages — nav, headings, highlights, Recent, the whole CV. Edit here, not in
+  the page files.
+- **`src/i18n/utils.ts`** resolves the language from the URL and builds links.
+  `localePath('/research/', 'en')` → `/en/research/`.
+- **`src/views/*.astro`** are the real pages; each takes a `lang` prop. The files
+  under `src/pages/` are two-line wrappers that pick the language. To add a page,
+  write one view and two wrappers.
+- Adding a third language means adding a key to `ui.ts`, a folder under
+  `src/content/*/`, and a `src/pages/<lang>/` directory. Nothing else changes.
+
+Bibliographic data — paper titles, author lists, journal names — is **never
+translated**. Only the `contribution` summary has a Korean counterpart
+(`contributionKo`).
+
 ## Where the content lives
 
 Everything editable is Markdown under `src/content/`, which is designed to be
@@ -30,18 +56,23 @@ opened directly as an Obsidian vault.
 
 ```
 src/content/
-  publications/*.md   8 papers. Frontmatter carries the full citation.
+  publications/*.md   8 papers, one file each — the citation is language
+                      independent. `contribution` (EN) and `contributionKo` (KO)
+                      are the two summaries.
                       `selfIndex` is the position of your name in `authors` —
                       the list bolds that entry rather than string-matching a
                       name that is spelled three different ways in print.
                       `featured: true` promotes a paper to the cards on top.
-  projects/*.md       5 projects. Body uses the fixed four-block template:
+  projects/ko/*.md    5 projects per language. Same filenames in both folders,
+  projects/en/*.md    so the URL slug is shared and the switcher lands on the
+                      matching page. Body uses the fixed four-block template:
                       ## Problem / ## Approach / ## Result / ## Links
-  thrusts/*.md        3 research thrusts. `projects:` lists project ids to
-                      cross-link.
+  thrusts/ko/*.md     3 research thrusts per language. `projects:` lists project
+  thrusts/en/*.md     slugs to cross-link.
 ```
 
-Identity, social links and the nav live in `src/data/site.ts`.
+Language-independent identity — email, GitHub, patent number, last-updated —
+lives in `src/data/site.ts`. Everything else lives in `src/i18n/ui.ts`.
 
 Frontmatter is schema-checked in `src/content/config.ts`, so a typo fails the
 build rather than rendering a blank field.
@@ -64,7 +95,9 @@ in sync.
 | `--c-signal` | `#8E4E1D` | `#DB9F6C` | data annotations, space & hardware thread |
 
 Type: **Spectral** for headings, **IBM Plex Sans** for body, **IBM Plex Mono**
-for numbers, dates, venues and chips.
+for numbers, dates, venues and chips. Korean falls through to **Noto Serif KR**
+and **IBM Plex Sans KR** in the same stacks, and `[lang="ko"]` sets
+`word-break: keep-all` so Korean never breaks mid-word.
 
 Rules the design depends on:
 

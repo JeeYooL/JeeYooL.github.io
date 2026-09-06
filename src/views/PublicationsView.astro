@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PubEntry from '../components/PubEntry.astro';
+import { t, type Lang } from '../i18n/ui';
+import { site } from '../data/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+
+const pubs = (await getCollection('publications')).sort((a, b) => a.data.order - b.data.order);
+const featured = pubs.filter((p) => p.data.featured);
+const tags = ['All', ...Array.from(new Set(pubs.flatMap((p) => p.data.tags))).sort()];
+const label = (tag: string) => s.tagLabels[tag as keyof typeof s.tagLabels] ?? tag;
+---
+<Base lang={lang} title={s.publications.title} description={s.publications.description}>
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
+    <header class="flex flex-col gap-4 pt-14 pb-8">
+      <span class="mono-label">{s.publications.label}</span>
+      <h1 class="max-w-[24ch] text-[clamp(30px,4.6vw,44px)] tracking-[-0.02em]">{s.publications.heading}</h1>
+      <p class="max-w-[74ch] text-[17px] text-ink-2">{s.publications.lede}</p>
+      {site.links.scholar && (
+        <a class="link w-fit text-[15px]" href={site.links.scholar} rel="noopener" target="_blank">{s.common.scholar}</a>
+      )}
+    </header>
+
+    <section class="pt-2">
+      <h2 class="mono-label">{s.publications.featured}</h2>
+      {featured.map((p) => <PubEntry pub={p.data} lang={lang} variant="featured" />)}
+    </section>
+
+    <section class="pt-14">
+      <div class="flex flex-wrap items-baseline justify-between gap-4 pb-2">
+        <h2 class="mono-label">{s.publications.allList}</h2>
+        <div class="flex flex-wrap gap-2" role="group" aria-label={s.publications.filterLabel}>
+          {tags.map((tag, i) => (
+            <button
+              type="button"
+              class="chip pub-filter cursor-pointer transition-colors hover:border-accent hover:text-accent aria-pressed:border-accent aria-pressed:bg-accent-wash aria-pressed:text-accent"
+              data-filter={tag}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              {label(tag)}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div id="pub-list">
+        {pubs.map((p) => <PubEntry pub={p.data} lang={lang} />)}
+      </div>
+      <p id="pub-empty" hidden class="border-t border-line py-8 text-[15px] text-muted">{s.publications.empty}</p>
+    </section>
+
+    <section class="mt-16 border-t border-line-strong pt-8">
+      <h2 class="mono-label">{s.publications.patentLabel}</h2>
+      <div class="flex flex-col gap-2 pt-4">
+        <h3 class="max-w-[70ch] text-[19px]">{s.publications.patentTitle}</h3>
+        <p class="font-mono text-[13px] text-muted">
+          <span class="text-signal">{site.patentNumber}</span> · {s.publications.patentMeta}
+        </p>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  // Client-side tag filter. No routing, no URL state — the list is short.
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.pub-filter'));
+  const items = Array.from(document.querySelectorAll<HTMLElement>('#pub-list [data-tags]'));
+  const empty = document.getElementById('pub-empty');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.filter ?? 'All';
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      let shown = 0;
+      items.forEach((item) => {
+        const tags = (item.dataset.tags ?? '').split('|');
+        const match = tag === 'All' || tags.includes(tag);
+        item.hidden = !match;
+        if (match) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+    });
+  });
+</script>

@@ -30,4 +30,5 @@ tags:
 featured: false
 order: 6
 contribution: "Connected colloid chemistry in the precursor ink to defect density in the finished film using in-situ EXAFS, showing that the state of the solution before coating predicts device performance after annealing."
+contributionKo: "in-situ EXAFS로 전구체 잉크의 콜로이드 화학과 완성 박막의 결함 밀도를 연결했습니다. 코팅 전 용액의 상태가 어닐링 후 소자 성능을 예측한다는 것을 보였습니다."
 ---

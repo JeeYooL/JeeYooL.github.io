@@ -25,4 +25,5 @@ featured: true
 order: 2
 role: "Co-first author (equal contribution)"
 contribution: "Traced the stability gap between one-pot and sequential processing to isopropylammonium cations forming in situ, then added the salt directly to the precursor. Certified 23.9% PCE, and the device held its initial efficiency through 2,000 h of continuous 1-sun operation."
+contributionKo: "일괄 공정과 순차 공정 사이의 안정성 격차를 in situ로 생성되는 isopropylammonium 양이온에서 찾아내고, 그 염을 전구체에 직접 넣었습니다. 공인 효율 23.9% PCE를 얻었고, 소자는 1-sun 연속 구동 2,000시간 동안 초기 효율을 유지했습니다."
 ---

@@ -20,6 +20,7 @@ const publications = defineCollection({
     role: z.string().optional(),
     openAccess: z.boolean().default(false),
     contribution: z.string(),
+    contributionKo: z.string(),
     abstractImage: z.string().optional(),
   }),
 });

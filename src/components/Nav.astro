@@ -1,9 +1,18 @@
 ---
-import { nav, site, href } from '../data/site';
-interface Props { scrollNav?: boolean }
-const { scrollNav = false } = Astro.props;
-const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const isActive = (h: string) => path === href(h).replace(/\/+$/, '');
+import { t, switchLabel, type Lang } from '../i18n/ui';
+import { localePath, canonicalPath } from '../i18n/utils';
+import { site, navPaths } from '../data/site';
+
+interface Props { lang: Lang; scrollNav?: boolean }
+const { lang, scrollNav = false } = Astro.props;
+const s = t(lang);
+const here = canonicalPath(Astro.url);
+const other: Lang = lang === 'ko' ? 'en' : 'ko';
+const items = navPaths.map((n) => ({
+  href: localePath(n.path, lang),
+  ...s.nav[n.key as keyof typeof s.nav],
+  active: here === n.path,
+}));
 ---
 <header
   id="site-header"
@@ -12,20 +21,30 @@ const isActive = (h: string) => path === href(h).replace(/\/+$/, '');
   class="sticky top-0 z-30 border-b border-line bg-bg/92 backdrop-blur-sm"
 >
   <div class="mx-auto flex max-w-[1140px] items-baseline gap-5 px-7 py-3">
-    <a href={href('/')} class="font-display text-[17px] font-semibold tracking-[-0.01em] no-underline">
-      {site.name}
+    <a href={localePath('/', lang)} class="font-display text-[17px] font-semibold tracking-[-0.01em] no-underline">
+      {s.name}
     </a>
-    <span class="mono-label hidden sm:inline">{site.role}</span>
-    <div class="ml-auto flex items-center gap-4">
-      <a class="mono-label no-underline hover:text-accent" href={site.links.github} rel="me noopener" target="_blank">GitHub</a>
-      <a class="mono-label no-underline hover:text-accent" href={`mailto:${site.email}`}>Email</a>
+    <span class="mono-label hidden sm:inline">{s.role}</span>
+    <div class="ml-auto flex items-center gap-3">
+      <a class="mono-label no-underline hover:text-accent" href={site.links.github} rel="me noopener" target="_blank">{s.common.github}</a>
+      <a class="mono-label no-underline hover:text-accent" href={`mailto:${site.email}`}>{s.common.email}</a>
+      <a
+        href={localePath(here, other)}
+        hreflang={other}
+        aria-label={s.a11y.langToggle}
+        class="rounded border border-line px-2 py-[3px] font-mono text-[11px] text-muted no-underline transition-colors hover:border-accent hover:text-accent"
+        >{switchLabel[lang]}</a
+      >
       <button
         id="theme-toggle"
         type="button"
-        aria-label="Switch colour theme"
+        aria-label={s.a11y.themeToggle}
+        data-label-system={s.theme.system}
+        data-label-light={s.theme.light}
+        data-label-dark={s.theme.dark}
         class="rounded border border-line px-2 py-[3px] font-mono text-[11px] text-muted transition-colors hover:border-accent hover:text-accent"
       >
-        <span data-theme-label>Theme</span>
+        <span data-theme-label>{s.theme.system}</span>
       </button>
     </div>
   </div>
@@ -35,23 +54,23 @@ const isActive = (h: string) => path === href(h).replace(/\/+$/, '');
   <div id="nav-panel" class="grid grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out">
     <div class="overflow-hidden">
       <nav
-        aria-label="Sections"
+        aria-label={s.a11y.sections}
         class="mx-auto grid max-w-[1140px] grid-cols-2 gap-px border-t border-line bg-line px-0 md:grid-cols-4"
       >
         {
-          nav.map((item) => (
+          items.map((item) => (
             <a
-              href={href(item.href)}
-              aria-current={isActive(item.href) ? 'page' : undefined}
+              href={item.href}
+              aria-current={item.active ? 'page' : undefined}
               class:list={[
                 'group flex flex-col gap-1 bg-bg px-7 py-3 no-underline transition-colors hover:bg-surface md:px-5',
-                isActive(item.href) && 'bg-surface',
+                item.active && 'bg-surface',
               ]}
             >
               <span
                 class:list={[
                   'font-display text-[15.5px] font-semibold',
-                  isActive(item.href) ? 'text-accent' : 'text-ink group-hover:text-accent',
+                  item.active ? 'text-accent' : 'text-ink group-hover:text-accent',
                 ]}
               >
                 {item.label}
@@ -105,14 +124,14 @@ const isActive = (h: string) => path === href(h).replace(/\/+$/, '');
   const toggle = document.getElementById('theme-toggle');
   const label = document.querySelector('[data-theme-label]');
   const readTheme = () => {
-    try {
-      return localStorage.getItem('theme') ?? 'system';
-    } catch {
-      return 'system';
-    }
+    try { return localStorage.getItem('theme') ?? 'system'; } catch { return 'system'; }
   };
   const paint = (mode: string) => {
-    if (label) label.textContent = mode === 'system' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light';
+    if (!label || !toggle) return;
+    label.textContent =
+      mode === 'dark' ? toggle.dataset.labelDark! :
+      mode === 'light' ? toggle.dataset.labelLight! :
+      toggle.dataset.labelSystem!;
   };
   paint(readTheme());
   toggle?.addEventListener('click', () => {

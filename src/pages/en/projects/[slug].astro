@@ -1,15 +1,15 @@
 ---
 import { getCollection } from 'astro:content';
-import ProjectDetailView from '../../views/ProjectDetailView.astro';
-import { splitId } from '../../i18n/utils';
+import ProjectDetailView from '../../../views/ProjectDetailView.astro';
+import { splitId } from '../../../i18n/utils';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
   return projects
-    .filter((p) => splitId(p.id).lang === 'ko')
+    .filter((p) => splitId(p.id).lang === 'en')
     .map((p) => ({ params: { slug: splitId(p.id).slug }, props: { project: p } }));
 }
 
 const { project } = Astro.props;
 ---
-<ProjectDetailView lang="ko" project={project} />
+<ProjectDetailView lang="en" project={project} />

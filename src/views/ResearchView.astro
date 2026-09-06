@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import LoopDiagram from '../components/LoopDiagram.astro';
+import { t, type Lang } from '../i18n/ui';
+import { localePath, splitId } from '../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+
+const thrusts = (await getCollection('thrusts'))
+  .filter((e) => splitId(e.id).lang === lang)
+  .sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection('projects')).filter((e) => splitId(e.id).lang === lang);
+const projectTitle = (slug: string) =>
+  projects.find((p) => splitId(p.id).slug === slug)?.data.title ?? slug;
+const known = (slug: string) => projects.some((p) => splitId(p.id).slug === slug);
+---
+<Base lang={lang} title={s.research.title} description={s.research.description}>
+  <div class="mx-auto max-w-[1140px] px-7 pb-24">
+    <header class="flex flex-col gap-4 pt-14 pb-10">
+      <span class="mono-label">{s.research.label}</span>
+      <h1 class="max-w-[22ch] text-[clamp(30px,4.6vw,44px)] tracking-[-0.02em]">{s.research.heading}</h1>
+      <p class="max-w-[74ch] text-[17px] text-ink-2">{s.research.lede}</p>
+    </header>
+
+    {thrusts.map((thrust, i) => (
+      <section class="band">
+        <div class="flex flex-col gap-1.5">
+          <span class="font-mono text-[11px] tracking-[0.13em] text-muted tabular-nums">
+            {lang === 'ko' ? `${s.home.ordinals[i]} 축` : `THRUST ${i + 1}`}
+          </span>
+          <h2 class:list={['text-[21px]', thrust.data.accent === 'signal' ? 'text-signal' : 'text-accent']}>
+            {thrust.data.title}
+          </h2>
+        </div>
+        <div class="flex flex-col gap-5">
+          <p class="max-w-[74ch] text-[16.5px] text-ink-2">{thrust.body?.trim()}</p>
+          <div class="flex flex-wrap gap-2">
+            {thrust.data.keywords.map((k) => <span class="chip">{k}</span>)}
+          </div>
+          {thrust.data.projects.filter(known).length > 0 && (
+            <div class="flex flex-col gap-1 border-t border-line pt-4">
+              <span class="mono-label">{s.research.builtIn}</span>
+              <ul class="flex flex-col gap-1 pt-1">
+                {thrust.data.projects.filter(known).map((slug) => (
+                  <li>
+                    <a class="link text-[15px]" href={localePath(`/projects/${slug}/`, lang)}>{projectTitle(slug)}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+    ))}
+
+    <section class="band">
+      <div class="flex flex-col gap-1.5">
+        <span class="mono-label">{s.research.loopLabel}</span>
+        <h2 class="text-[21px]">{s.research.loopHeading}</h2>
+        <p class="max-w-[24ch] text-[13px] text-muted">{s.research.loopNote}</p>
+      </div>
+      <LoopDiagram lang={lang} />
+    </section>
+  </div>
+</Base>
