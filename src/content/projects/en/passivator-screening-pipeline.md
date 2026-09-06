@@ -11,6 +11,10 @@ tags:
 thumbnail: "passivator-screening-pipeline/descriptor-correlation.png"
 thumbnailAlt: "Correlation heatmap of twenty features"
 images:
+  - src: "passivator-screening-pipeline/pipeline-flow.png"
+    alt: "End-to-end workflow from physics ground truth to beamline falsification"
+    caption: "The pipeline end to end. Literature anchors, standard SQ optics and proton kinetics feed one SSOT generator; graph representation and confounder control are evaluated in parallel; a three-objective MOBO then issues the experiment request. The dashed path is the closed loop where measured P/P0 updates the ground truth."
+    wide: true
   - src: "passivator-screening-pipeline/descriptor-correlation.png"
     alt: "Pearson correlation heatmap of the twenty training features"
     caption: "Pearson correlation across the twenty features that enter training. The point is that no pair exceeds |r| = 0.95 — a pre-training check that redundant features are not inflating performance."
@@ -37,4 +41,3 @@ Composition-side work runs on the same footing: a ΔG_mix filter over a high-ent
 
 ## Links
 
-- Pipeline flow diagram — *asset pending*

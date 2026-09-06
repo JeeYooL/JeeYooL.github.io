@@ -11,6 +11,10 @@ tags:
 thumbnail: "passivator-screening-pipeline/descriptor-correlation.png"
 thumbnailAlt: "20개 피처 상관 히트맵"
 images:
+  - src: "passivator-screening-pipeline/pipeline-flow.png"
+    alt: "물리 진값에서 빔라인 반증까지 이어지는 end-to-end 워크플로"
+    caption: "파이프라인 전체. 문헌 앵커·표준 SQ 광학·양성자 동역학이 SSOT 생성기로 모이고, 그래프 표현과 교란 통제가 나란히 평가된 뒤 3목적 MOBO를 거쳐 실험요청서로 나간다. 점선은 실측 P/P₀가 진값을 갱신하는 폐루프."
+    wide: true
   - src: "passivator-screening-pipeline/descriptor-correlation.png"
     alt: "학습 피처 20개의 Pearson 상관 히트맵"
     caption: "학습에 들어가는 피처 20개의 Pearson 상관. 요점은 |r| > 0.95 쌍이 0이라는 것 — 중복 피처가 성능을 부풀리지 않는지 학습 전에 확인한다."
@@ -37,4 +41,3 @@ Descriptor는 긁어오는 것이 아니라 계산합니다. 약 213개 후보 �
 
 ## 링크
 
-- 파이프라인 플로우 다이어그램 — *자료 준비 중*

@@ -11,6 +11,10 @@ tags:
 thumbnail: "self-driving-lab/pareto-front.png"
 thumbnailAlt: "예측 PCE 대 유지율 파레토 전선"
 images:
+  - src: "self-driving-lab/architecture.png"
+    alt: "입력 피처에서 능동학습 MOBO까지 4단 하이브리드 모델 구조"
+    caption: "시스템 구조. (a) 분자 그래프와 운전 스트레스가 입력으로 들어가고 (b) GINEConv GNN 분기와 MLIP 디스크립터가 fusion MLP 앙상블로 합쳐지며 (c) GroupKFold 교차검증과 사후 σ 보정을 거쳐 (d) qNEHVI 획득함수가 다음 후보를 지목한다."
+    wide: true
   - src: "self-driving-lab/pareto-front.png"
     alt: "예측 PCE 대 유지율 파레토 전선과 제3 목적축"
     caption: "폐루프가 실제로 내놓는 결정. (a) 후보 50개에서 추려진 파레토 전선 10점, 색은 Cs 분율. (b) 제3 목적축인 상안정성은 Cs 0.15 근처에서 정점을 지나 급락한다 — 세 목적이 진짜로 상충하는 지점."
@@ -42,5 +46,4 @@ images:
 
 ## 링크
 
-- 아키텍처 다이어그램 — *자료 준비 중*
 - 관측 레이어 시연 — *자료 준비 중*

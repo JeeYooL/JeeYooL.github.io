@@ -11,6 +11,10 @@ tags:
 thumbnail: "self-driving-lab/pareto-front.png"
 thumbnailAlt: "Pareto front of predicted PCE against retention"
 images:
+  - src: "self-driving-lab/architecture.png"
+    alt: "Four-stage hybrid model architecture from input features to active-learning MOBO"
+    caption: "The architecture. (a) Molecular graphs and operating stress enter as features; (b) a GINEConv GNN branch and MLIP descriptors merge in a fusion MLP ensemble; (c) GroupKFold cross-validation and post-hoc sigma calibration follow; (d) a qNEHVI acquisition function nominates the next candidates."
+    wide: true
   - src: "self-driving-lab/pareto-front.png"
     alt: "Pareto front of predicted PCE against retention, with the third objective"
     caption: "What the closed loop actually returns. (a) The ten-point Pareto front drawn from fifty candidates, coloured by Cs fraction. (b) Phase stability, the third objective, peaks near Cs 0.15 and then collapses — the point where the three objectives genuinely conflict."
@@ -42,5 +46,4 @@ Reference implementation built and run end to end, with structured event emissio
 
 ## Links
 
-- Architecture diagram — *asset pending*
 - Observability layer walkthrough — *asset pending*
