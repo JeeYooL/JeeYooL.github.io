@@ -8,18 +8,13 @@ tags:
   - "Hardware"
   - "Firmware"
   - "Instrumentation"
-# To add images, drop files into src/assets/projects/mppt-measurement-system/
-# and uncomment the lines below. See src/assets/README.md.
-# thumbnail: "mppt-measurement-system/board.jpg"
-# thumbnailAlt: "MPPT measurement board"
-# images:
-#   - src: "mppt-measurement-system/board.jpg"
-#     alt: "MPPT measurement board"
-#     caption: "Rev 02 single-channel board — INA226, MCP4725 and LM358 layout."
-#   - src: "mppt-measurement-system/jig.jpg"
-#     alt: "2x2 temperature-controlled jig"
-#     caption: "Straight out of the workshop."
-#     wide: true
+thumbnail: "mppt-measurement-system/mppt-gui-trace.png"
+thumbnailAlt: "MPPT control software during a 600-second tracking run"
+images:
+  - src: "mppt-measurement-system/mppt-gui-trace.png"
+    alt: "Measurement software logging a 600-second MPPT run"
+    caption: "The control software mid-run. A 600 s MPPT trace logging current and power density live — 0.9187 V, 3.62 mA/cm² and 3.33 mW/cm² as the run ends."
+    wide: true
 ---
 
 ## Problem
@@ -54,4 +49,3 @@ Single-channel board complete and in use. Twelve-channel revision and the operan
 
 - Board photograph and circuit block diagram — *asset pending*
 - Jig CAD render — *asset pending*
-- Representative MPPT trace — *asset pending*

@@ -8,6 +8,15 @@ tags:
   - "Machine Learning"
   - "DFT"
   - "Materials Design"
+thumbnail: "passivator-screening-pipeline/descriptor-correlation.png"
+thumbnailAlt: "Correlation heatmap of twenty features"
+images:
+  - src: "passivator-screening-pipeline/descriptor-correlation.png"
+    alt: "Pearson correlation heatmap of the twenty training features"
+    caption: "Pearson correlation across the twenty features that enter training. The point is that no pair exceeds |r| = 0.95 — a pre-training check that redundant features are not inflating performance."
+  - src: "passivator-screening-pipeline/descriptor-coefficients.png"
+    alt: "Sign-constrained NNLS regression coefficients"
+    caption: "Descriptor coefficients where physics fixes the sign in advance and only the magnitude is fitted (R² = 0.80). Insertion-type mono-ammonium is the worst term at −0.45; the bidentate clamp is the best at +0.35."
 ---
 
 ## Problem
@@ -29,4 +38,3 @@ Composition-side work runs on the same footing: a ΔG_mix filter over a high-ent
 ## Links
 
 - Pipeline flow diagram — *asset pending*
-- Descriptor correlation map — *asset pending*

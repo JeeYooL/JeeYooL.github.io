@@ -8,6 +8,8 @@ tags:
   - "Tooling"
   - "Automation"
   - "Open Source"
+thumbnail: "mppt-measurement-system/mppt-gui-trace.png"
+thumbnailAlt: "Screenshot of the self-written measurement software"
 ---
 
 ## Problem

@@ -8,6 +8,13 @@ tags:
   - "Automation"
   - "Optimization"
   - "Systems"
+thumbnail: "self-driving-lab/pareto-front.png"
+thumbnailAlt: "Pareto front of predicted PCE against retention"
+images:
+  - src: "self-driving-lab/pareto-front.png"
+    alt: "Pareto front of predicted PCE against retention, with the third objective"
+    caption: "What the closed loop actually returns. (a) The ten-point Pareto front drawn from fifty candidates, coloured by Cs fraction. (b) Phase stability, the third objective, peaks near Cs 0.15 and then collapses — the point where the three objectives genuinely conflict."
+    wide: true
 ---
 
 ## Problem

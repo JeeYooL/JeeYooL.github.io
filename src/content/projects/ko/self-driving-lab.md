@@ -8,6 +8,13 @@ tags:
   - "Automation"
   - "Optimization"
   - "Systems"
+thumbnail: "self-driving-lab/pareto-front.png"
+thumbnailAlt: "예측 PCE 대 유지율 파레토 전선"
+images:
+  - src: "self-driving-lab/pareto-front.png"
+    alt: "예측 PCE 대 유지율 파레토 전선과 제3 목적축"
+    caption: "폐루프가 실제로 내놓는 결정. (a) 후보 50개에서 추려진 파레토 전선 10점, 색은 Cs 분율. (b) 제3 목적축인 상안정성은 Cs 0.15 근처에서 정점을 지나 급락한다 — 세 목적이 진짜로 상충하는 지점."
+    wide: true
 ---
 
 ## 문제

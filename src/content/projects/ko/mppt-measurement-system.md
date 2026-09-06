@@ -8,18 +8,13 @@ tags:
   - "Hardware"
   - "Firmware"
   - "Instrumentation"
-# 이미지를 넣으려면 src/assets/projects/mppt-measurement-system/ 에 파일을 두고
-# 아래 주석을 풀어 파일명을 맞추세요. 자세한 설명은 src/assets/README.md 참고.
-# thumbnail: "mppt-measurement-system/board.jpg"
-# thumbnailAlt: "MPPT 측정 보드"
-# images:
-#   - src: "mppt-measurement-system/board.jpg"
-#     alt: "MPPT 측정 보드"
-#     caption: "Rev 02 단채널 보드. INA226·MCP4725·LM358 배치."
-#   - src: "mppt-measurement-system/jig.jpg"
-#     alt: "2×2 온도 제어 지그"
-#     caption: "가공 직후 상태."
-#     wide: true
+thumbnail: "mppt-measurement-system/mppt-gui-trace.png"
+thumbnailAlt: "MPPT 측정 소프트웨어의 600초 추적 화면"
+images:
+  - src: "mppt-measurement-system/mppt-gui-trace.png"
+    alt: "600초 MPPT 런을 기록 중인 측정 소프트웨어"
+    caption: "제어 소프트웨어가 도는 중. 600초 MPPT 런에서 전류밀도와 전력밀도를 실시간으로 기록한다 — 런 종료 시점 0.9187 V, 3.62 mA/cm², 3.33 mW/cm²."
+    wide: true
 ---
 
 ## 문제
@@ -54,4 +49,3 @@ Rev 03은 이 단채널을 12채널로 확장해, 2×2 온도 제어 operando �
 
 - 보드 사진 및 회로 블록 다이어그램 — *자료 준비 중*
 - 지그 CAD 렌더 — *자료 준비 중*
-- 실제 MPPT 트레이스 — *자료 준비 중*

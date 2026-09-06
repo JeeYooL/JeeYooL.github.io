@@ -8,6 +8,17 @@ tags:
   - "Space"
   - "Simulation"
   - "Machine Learning"
+thumbnail: "space-degradation-pipeline/proton-retention-fluence.png"
+thumbnailAlt: "Efficiency retention against proton fluence"
+images:
+  - src: "space-degradation-pipeline/proton-retention-fluence.png"
+    alt: "P/P0 retention against 100 keV proton fluence"
+    caption: "P/P₀ against 100 keV proton fluence. (a) Caesium substitution buys +9.4 pp at the mission condition of 10¹⁴ p/cm². (b) The bidentate clamp of PDAI2 buys +16 pp over PEAI at the same point."
+    wide: true
+  - src: "space-degradation-pipeline/device-physics-chain.png"
+    alt: "Deterministic optical and lifetime physics chain from composition to output"
+    caption: "The deterministic chain from composition to output — band gap by Vegard's law, Jsc by integrating AM1.5G, Voc from the Shockley-Queisser radiative limit. Lifetime is a reference value multiplied by per-layer factors."
+    wide: true
 ---
 
 ## Problem

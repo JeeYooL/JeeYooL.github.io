@@ -8,6 +8,17 @@ tags:
   - "Space"
   - "Simulation"
   - "Machine Learning"
+thumbnail: "space-degradation-pipeline/proton-retention-fluence.png"
+thumbnailAlt: "양성자 플루언스에 따른 효율 유지율 곡선"
+images:
+  - src: "space-degradation-pipeline/proton-retention-fluence.png"
+    alt: "100 keV 양성자 플루언스에 따른 P/P0 유지율"
+    caption: "100 keV 양성자에 대한 P/P₀ 곡선. (a) Cs 치환은 임무 조건 10¹⁴ p/cm²에서 +9.4 pp를 준다. (b) PDAI2의 양단 클램프는 같은 지점에서 PEAI 대비 +16 pp."
+    wide: true
+  - src: "space-degradation-pipeline/device-physics-chain.png"
+    alt: "조성에서 출력까지의 결정론적 광학·수명 물리 체인"
+    caption: "조성에서 출력까지 이어지는 결정론적 체인 — Vegard 법칙으로 밴드갭, AM1.5G 적분으로 Jsc, Shockley-Queisser 한계로 Voc. 수명은 기준 수명에 층별 인자를 곱해 만든다."
+    wide: true
 ---
 
 ## 문제

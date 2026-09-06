@@ -8,6 +8,15 @@ tags:
   - "Machine Learning"
   - "DFT"
   - "Materials Design"
+thumbnail: "passivator-screening-pipeline/descriptor-correlation.png"
+thumbnailAlt: "20개 피처 상관 히트맵"
+images:
+  - src: "passivator-screening-pipeline/descriptor-correlation.png"
+    alt: "학습 피처 20개의 Pearson 상관 히트맵"
+    caption: "학습에 들어가는 피처 20개의 Pearson 상관. 요점은 |r| > 0.95 쌍이 0이라는 것 — 중복 피처가 성능을 부풀리지 않는지 학습 전에 확인한다."
+  - src: "passivator-screening-pipeline/descriptor-coefficients.png"
+    alt: "부호 제약 NNLS 회귀 계수"
+    caption: "물리가 부호를 먼저 정하고 크기만 적합한 디스크립터 계수 (R² = 0.80). 삽입형 모노암모늄이 −0.45로 가장 불리하고, 양단을 잠그는 bidentate가 +0.35로 가장 유리하다."
 ---
 
 ## 문제
@@ -29,4 +38,3 @@ Descriptor는 긁어오는 것이 아니라 계산합니다. 약 213개 후보 �
 ## 링크
 
 - 파이프라인 플로우 다이어그램 — *자료 준비 중*
-- Descriptor 상관 맵 — *자료 준비 중*
